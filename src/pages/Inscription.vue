@@ -1,125 +1,142 @@
 <template>
     <div class="q-pa-md">
-        <q-btn label="Nueva" color="primary" class="q-ma-md" @click="dialog = true; bttForm = true" />
-        <q-table title="Inscripciones" :rows="inscirptionsRow" :columns="columns" row-key="name" :loading="loading">
+        <q-table title="Inscripciones" :rows="row" :columns="columns" row-key="name">
             <template v-slot:body-cell-actions="props">
                 <q-td :props="props">
-                    <q-btn color="yellow" icon="mode_edit" class="q-mx-sm" @click="onEdit(props.row)"></q-btn>
+                    <q-btn
+                        :color="props.row.state_inscription == 'confirmado' ? 'green' :
+                        props.row.state_inscription == 'espera' ? 'warning' : props.row.state_inscription == 'denegado' ? 'negative' : 'nada'"
+                        class="q-mx-sm" @click="onEdit(props.row)">{{ props.row.state_inscription }}</q-btn>
                 </q-td>
             </template>
-            <template v-slot:loading>
-                <q-inner-loading showing color="primary" />
-            </template>
         </q-table>
+        <q-dialog v-model="dialog" persistent :maximized="true" transition-show="slide-up" transition-hide="slide-down">
+            <q-card class="bg-white text-primary">
+                <q-bar>
+                    <q-toolbar-title>Asociación de Scouts del Guayas</q-toolbar-title>
+                    <q-space />
+                    <q-btn dense flat icon="close" v-close-popup>
+                        <q-tooltip class="bg-white text-primary">Close</q-tooltip>
+                    </q-btn>
+                </q-bar>
+
+                <q-card-section>
+                    <div class="text-h6">Información de Inscirpion</div>
+                </q-card-section>
+
+                <q-card-section class="col q-pt-none">
+                    <q-form class="q-gutter-md row justify-center">
+                        <q-input class="col-4" filled v-model="inscriptionData.name" label="Nombre"></q-input>
+                        <q-select class="col-4" v-model="inscriptionData.state_inscription" :options="status">
+                        </q-select>
+                        <q-input class="col-4" filled v-model="inscriptionData.type" label="Unidad"></q-input>
+                        <q-input class="col-4" filled v-model="inscriptionData.group" label="Grupo"></q-input>
+                        <q-btn class="col-6" @click="showDialog(inscriptionData.image_permissions)">Ver Permiso</q-btn>
+                        <q-btn class="col-6" @click="showDialog(inscriptionData.image_pay)">Ver Pago</q-btn>
+                        <input type="hidden" v-model="inscriptionData.id">
+                        <q-input class="col-8" v-model="inscriptionData.observations" filled type="textarea" />
+                        {{ inscriptionData.observations }}
+                    </q-form>
+                </q-card-section>
+                <q-card-actions align="right" class="bg-white text-teal">
+                    <q-btn flat label="Guardar" @click="updateInscription"></q-btn>
+                </q-card-actions>
+                {{ scout }}
+            </q-card>
+            <q-dialog v-model="imageDialog">
+                <q-card style="width: 700px; max-width: 80vw;">
+                    <q-card-section>
+                        <div class="text-h6">Imagen</div>
+                    </q-card-section>
+
+                    <q-card-section class="q-pt-none">
+                        <q-img :src="image" no-native-menu>
+                            <div class="absolute-top text-center">
+                                Paga
+                            </div>
+                        </q-img>
+                    </q-card-section>
+                </q-card>
+            </q-dialog>
+        </q-dialog>
     </div>
-    <q-dialog v-model="dialog" transition-show="slide-up" transition-hide="slide-down">
-        <q-card style="width: 700px; max-width: 80vw;">
-            <q-bar class="bg-warning q-pa-lg">
-                <q-toolbar-title>Asociación de Scouts del Guayas</q-toolbar-title>
-                <q-space />
-                <q-btn dense flat icon="close" v-close-popup>
-                    <q-tooltip class="bg-white text-primary">Close</q-tooltip>
-                </q-btn>
-            </q-bar>
-
-            <q-card-section>
-                <div class="text-h6">Nueva Inscripcion</div>
-            </q-card-section>
-
-            <q-card-section class="col q-pt-none">
-                <q-form class="q-gutter-md ">
-                    <input type="hidden" v-model="inscription.id">
-                    <div class="row justify-around">
-                        <q-input class="col-4" filled label="Inicio" v-model="inscription.dateStart" mask="date"
-                            :rules="['date']">
-                            <template v-slot:append>
-                                <q-icon name="event" class="cursor-pointer">
-                                    <q-popup-proxy>
-                                        <q-date v-model="inscription.dateStart"></q-date>
-                                    </q-popup-proxy>
-                                </q-icon>
-                            </template>
-                        </q-input>
-                        <q-input class="col-4" filled v-model="inscription.dateEnd" label="Final" mask="date"
-                            :rules="['date']">
-                            <template v-slot:append>
-                                <q-icon name="event" class="cursor-pointer">
-                                    <q-popup-proxy>
-                                        <q-date v-model="inscription.dateEnd"></q-date>
-                                    </q-popup-proxy>
-                                </q-icon>
-                            </template>
-                        </q-input>
-                        <q-input class="col-8 q-ml-lg" v-model="inscription.description" filled label="Descripción">
-                        </q-input>
-                        {{ inscription }}
-                    </div>
-                </q-form>
-            </q-card-section>
-            <q-card-actions align="right" class="bg-white text-teal">
-                <q-btn flat label="Guardar" @click="postInscription" v-show="bttForm"></q-btn>
-                <q-btn flat label="Actualizar" @click="putInscription" v-show="!bttForm"></q-btn>
-            </q-card-actions>
-        
-        </q-card>
-    </q-dialog>
 </template>
+
 <script setup>
 import { reactive, ref } from 'vue'
-import ServicesInscription from '../services/ServicesInscription';
+import ServicesInscription from 'src/services/ServicesInscription';
 const columns = [
     {
-        namel: 'name',
+        name: 'name',
         required: true,
-        label: 'Descripción',
+        label: 'Nombre',
         align: 'left',
-        field: row => row.description,
+        field: row => row.name,
         format: val => `${val}`,
         sortable: true
     },
-    { name: 'date_start', align: 'center', label: 'Fecha de Inicio', field: 'date_start', },
-    { name: 'date_end', label: 'Fecha de Finalización', align: 'center', field: 'date_end' },
-    { name: 'actions', lable: 'Acctiones' }
+    {
+        name: 'group', align: 'center', label: 'Grupo', field: row => row.group
+    },
+    { name: 'type', label: 'Unidad', align: 'center', field: row => row.type },
+    { name: 'state_inscription', label: 'Estado', align: 'center', field: row => row.state_inscription },
+    { name: 'actions', label: 'Acciones', align: 'center', sortable: true }
 ]
-const bttForm = ref(false)
-const dialog = ref(false)
-const inscirptionsRow = ref([])
-const inscription = reactive({
-    dateStart: '',
-    dateEnd: '',
-    description: '',
-    id: ''
-})
+const inscriptionData = reactive({
+    name: '',
+    group: '',
+    type: '',
+    state_inscription: '',
+    observations: '',
+    id: '',
+    image_permissions: '',
+    image_pay: ''
 
-const postInscription = async () => {
-    const data = ServicesInscription.store(inscription)
-    console.log(data)
-    getInscriptions()
-}
+})
+const imageDialog = ref(false)
+const status = ['confirmado', 'espera', 'denegado']
+const dialog = ref(false)
+const image = ref('')
+const row = ref([])
+
 
 const onEdit = (row) => {
     dialog.value = true
-    inscription.dateEnd = row.date_end
-    inscription.dateStart = row.date_start
-    inscription.description = row.description
-    inscription.id = row.id
-    bttForm.value = false
-
+    inscriptionData.name = row.name
+    inscriptionData.group = row.group
+    inscriptionData.type = row.type
+    inscriptionData.state_inscription = row.state_inscription
+    inscriptionData.id = row.id
+    inscriptionData.image_permissions = row.image_permissions
+    inscriptionData.image_pay = row.image_pay
 }
-
-const putInscription = () => {
-    ServicesInscription.put(inscription.id, inscription)
-        .then(response => {
+const updateInscription = () => {
+    ServicesInscription.putInscription({
+        id: inscriptionData.id,
+        state_inscription: inscriptionData.state_inscription,
+        observations: inscriptionData.observations
+    })
+        .then(data => {
+            console.log(data)
+            loadTable()
             dialog.value = false
-            console.log(response)
-            getInscriptions()
         })
 }
-const getInscriptions = () => {
-    ServicesInscription.get()
-        .then(response => inscirptionsRow.value = response.data)
 
+const loadTable = () => {
+    ServicesInscription.getAllInscriptions()
+        .then(data => {
+            console.log(data.data[0].state_inscription)
+            console.log(data.data)
+            row.value = data.data
+            console.log(row)
+        })
 }
 
-getInscriptions()
+const showDialog = (img) => {
+    console.log(img)
+    image.value = img
+    imageDialog.value = true
+}
+loadTable()
 </script>

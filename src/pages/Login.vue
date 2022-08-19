@@ -12,7 +12,7 @@
                     <q-input filled v-model="loginForm.password" label="Contraseña" hint="" lazy-rules />
                 </div>
                 <div class="q-pa-sm">
-                    <a href="" class="float-right" style="text-decoration: none;">¡Registrate!</a>
+                    <a  class="float-right" style="text-decoration: none;" @click="redirect">¡Registrate!</a>
 
                 </div>
                 <q-btn label="Login" style="width: 100%;" type="submit" color="primary" @click="login" />
@@ -35,6 +35,9 @@ const loginForm = reactive({
     password: ''
 })
 const response = ref(null)
+const redirect = () => {
+    router.push('/register')
+}
 const login = async function (e) {
     e.preventDefault()
     const response = await ServicesAuth.auth(loginForm)

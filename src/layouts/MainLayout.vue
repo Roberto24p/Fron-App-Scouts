@@ -49,10 +49,18 @@ import { useRouter } from "vue-router"
 
 
 const linksList = [
+    {
+    title: 'Perfil',
+    caption: '@quasarframework',
+    icon: 'face',
+    link: {
+      name: 'Profile'
+    }
+  },
   {
     title: 'Grupos',
     caption: 'quasar.dev',
-    icon: 'school',
+    icon: 'groups',
     link: {
       name: 'group'
     }
@@ -60,7 +68,7 @@ const linksList = [
   {
     title: 'Dirigentes',
     caption: 'github.com/quasarframework',
-    icon: 'code',
+    icon: 'explore',
     link: {
       name: 'directing'
     }
@@ -68,7 +76,7 @@ const linksList = [
   {
     title: 'Scouts',
     caption: 'chat.quasar.dev',
-    icon: 'chat',
+    icon: 'person',
     link: {
       name: 'scout'
     }
@@ -76,18 +84,25 @@ const linksList = [
   {
     title: 'Unidades',
     caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
+    icon: 'group',
     link: {
       name: 'unit'
     }
   },
-
   {
     title: 'Inscripciones',
     caption: '@quasarframework',
-    icon: 'rss_feed',
+    icon: 'description',
     link: {
-      name: 'inscription'
+      name: 'Inscription'
+    }
+  },
+  {
+    title: 'Periodos',
+    caption: '@quasarframework',
+    icon: 'today',
+    link: {
+      name: 'period'
     }
   },
   {
@@ -108,7 +123,7 @@ export default defineComponent({
   },
 
   setup() {
-const router = useRouter()
+    const router = useRouter()
 
     const signOnut = () => {
       localStorage.removeItem('token')

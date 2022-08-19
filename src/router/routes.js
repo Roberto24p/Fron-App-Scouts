@@ -9,7 +9,7 @@ const routes = [
       { path: '/directing', component: () => import('pages/Directing.vue'), name: 'directing'},
       { path: '/scout', component: ()=> import('pages/Scout.vue'), name: 'scout'},
       { path: '/unit', component: ()=> import('pages/Unit.vue'), name: 'unit'},
-      { path: '/inscription', component: ()=> import('pages/Inscription.vue'), name: 'inscription'},
+      { path: '/period', component: ()=> import('pages/Period.vue'), name: 'period'},
       { path: '/advancePlan', component: ()=> import('pages/AdvancePlan.vue'), name: 'advancePlan'},
       { path: '/advancePlanDetails/:idAdvancePlan', component: ()=> import('pages/AdvancePlanDetails.vue'), name: 'advancePlanDetails'},
       { path: '/advancePlanEdit/:idAdvancePlan', component: ()=> import('pages/AdvancePlanEdit.vue'), name: 'AdvancePlanEdit'},
@@ -17,6 +17,7 @@ const routes = [
       { path: '/profileEdit', component: ()=> import('pages/ProfileEdit.vue'), name: 'ProfileEdit'},
       { path: '/inscriptionScout', component: ()=> import('pages/InscriptionScout.vue'), name: 'InscriptionScout'},
       { path: '/advancePlanScout', component: ()=> import('pages/AdvancePlanScout.vue'), name: 'AdvancePlanScout'},
+      { path: '/inscription', component: ()=> import('pages/Inscription.vue'), name: 'Inscription'},
 
     ]
   },

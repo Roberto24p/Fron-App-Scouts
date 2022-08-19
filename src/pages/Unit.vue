@@ -1,7 +1,7 @@
 <template>
     <div class="q-pa-md">
         <q-btn label="Agregar" color="primary" class="q-ma-md" @click="dialog = true"></q-btn>
-        <q-table title="Beneficiarios Scouts" :rows="rowUnits" :columns="columns" row-key="name">
+        <q-table title="Unidades Scouts" :rows="rowUnits" :columns="columns" row-key="name">
             <template v-slot:body-cell-actions="props">
                 <q-td :props="props">
                     <q-btn color="yellow" icon="mode_edit" class="q-mx-sm" @click="onEdit(props.row)"></q-btn>

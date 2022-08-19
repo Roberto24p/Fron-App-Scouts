@@ -54,20 +54,26 @@ const ServicesInscription = {
     },
     registerInscription: async (groupId) => {
         const token = localStorage.getItem('token')
+        try {
+            const response = await fetch('http://127.0.0.1:8000/api/inscription/register', {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    group_id: groupId,
 
-        const response = await fetch('http://127.0.0.1:8000/api/inscription/register', {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                group_id: groupId,
+                }),
+                method: 'POST'
+            })
+            const data = await response.json()
+            return data
+        }catch(e){
+            console.log(e)
+            return e
+        }
 
-            }),
-            method: 'POST'
-        })
-        const data = await response.json()
-        return data
+        
     },
 
     getStatusInscription: async () => {
@@ -77,6 +83,32 @@ const ServicesInscription = {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
+        })
+        const data = await response.json()
+        return data
+    },
+
+    getAllInscriptions: async () => {
+        const token = localStorage.getItem('token')
+        const response = await fetch('http://127.0.0.1:8000/api/inscription', {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+        })
+        const data = await response.json()
+        return data
+    },
+
+    putInscription: async (inscription) => {
+        const token = localStorage.getItem('token')
+        const response = await fetch('http://127.0.0.1:8000/api/updateInscription', {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            method: 'POST',
+            body: JSON.stringify(inscription)
         })
         const data = await response.json()
         return data

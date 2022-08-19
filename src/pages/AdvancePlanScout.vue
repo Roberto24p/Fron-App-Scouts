@@ -82,14 +82,8 @@
                                             </q-item>
                                         </q-list>
                                     </div>
-
-
-
                                 </q-tab-panel>
-
                             </q-tab-panels>
-
-
                         </q-item-section>
                     </q-item>
                 </q-card>
