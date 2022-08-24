@@ -18,7 +18,12 @@
                             <q-item-label caption>
                                 Manada
                             </q-item-label>
+                            <!-- <q-item-label caption v-show="hasAdvancePlan">
+                            {{ team_text }}
+                            </q-item-label> -->
+
                         </q-item-section>
+                      
 
                     </q-item>
                 </q-card>
@@ -64,7 +69,6 @@
                             </q-tabs>
 
                             <q-separator />
-
                             <q-tab-panels v-model="tab" animated>
                                 <q-tab-panel v-for="recognition in advancePlan" v-bind:key="recognition.id"
                                     :name="recognition.name">
@@ -95,20 +99,35 @@
 <script setup>
 import { reactive, ref } from "vue"
 import ServicesAdvancePlan from 'src/services/ServicesAdvancePlan'
-import { useRouter } from "vue-router"
+import ServicesUnit from 'src/services/ServicesUnit'
+import { useRoute } from "vue-router"
 
-const router = useRouter()
+const router = useRoute()
 
 const profile = reactive({
     name: 'Roberto Plancencio',
     email: 'roberto24r24r@Gmail.com'
 })
+alert(router.params.scoutId)
 const checks = reactive({})
 const advancePlan = ref([])
+const hasAdvancePlan = ref(true)
 const tab = ref('parche tierno')
-ServicesAdvancePlan.advancePlanDetails(1)
+const loadAdvancePlan = () => {
+    ServicesAdvancePlan.getChecks(router.params.scoutId)
+        .then(data => {
+            if (data.topics.length == 0) {
+                hasAdvancePlan.value = false
+                return 0
+            }
+            data.topics.forEach(topic => {
+                console.log(topic)
+                checks[topic.topic_id].check = true
+            })
+        })
+}
+ServicesAdvancePlan.advancePlanDetails(router.params.scoutId)
     .then(data => {
-        console.log(data)
         data[0].recognitions.forEach(info => {
             info.topics.forEach(items => {
                 const topic = {
@@ -121,8 +140,9 @@ ServicesAdvancePlan.advancePlanDetails(1)
         })
         advancePlan.value = data[0].recognitions
         tab.value = advancePlan.value[0].name
-        console.log(checks)
+
     })
+
 const checkTopic = (topicId) => {
     const token = localStorage.getItem('token')
     console.log(topicId)
@@ -133,19 +153,32 @@ const checkTopic = (topicId) => {
         },
         body: JSON.stringify({
             scout_id: 2,
-            topic_id: topicId
+            topic_id: topicId,
         }),
         method: 'POST'
     }).then(response => response.json())
         .then(data => {
-            console.log(data)
-            data.topics.forEach(topic =>{
+            data.topics.forEach(topic => {
                 console.log(checks[topic.id])
                 checks[topic.topic_id].check = true
+                
             })
-
+            loadAdvancePlan()
         })
         .catch(e => console.log(e))
-
 }
+
+// const loadTeams = () => {
+//     ServicesUnit.getByScout(1)
+//         .then(response => {
+//             const arrayAux = []
+//             response.forEach(unit => {
+//                 console.log(unit)
+      
+//             })
+//             console.log(arrayAux)
+//             console.log(response)
+//         })
+// }
+loadAdvancePlan()
 </script>

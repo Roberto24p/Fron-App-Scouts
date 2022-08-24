@@ -14,30 +14,41 @@ const ServicesGroup = {
         return data
     },
     post: async (group) => {
+        const token = localStorage.getItem('token')
+
         const response = await fetch('http://192.168.100.39:8000/api/group', {
             method: 'POST',
-            body: new URLSearchParams(group),
+            body: JSON.stringify(group),
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
             },
         })
         const data = await response.json()
         return data
     },
     put: async (id, group) => {
+        const token = localStorage.getItem('token')
         const response = await fetch(`http://192.168.100.39:8000/api/group/${id}`, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
             },
-            body: new URLSearchParams(group),
+            body: JSON.stringify(group),
         })
         const data = await response.json()
         return data
     },
     delete: async (id) => {
+        const token = localStorage.getItem('token')
+
         const response = await fetch(`http://192.168.100.39:8000/api/group/${id}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
         })
         const data = response.json()
         return data
@@ -55,7 +66,7 @@ const ServicesGroup = {
         )
         const data = response.json()
         return data
-    }
+    },
 
 }
 

@@ -1,7 +1,7 @@
-const ServicesUnit = {
-    getUnitByGroup: async (idGroup) => {
+const ServicesTeam = {
+    getTeams: async () => {
         const token = localStorage.getItem('token')
-        const response = await fetch(`http://192.168.100.39:8000/api/unit/group/${idGroup}`, {
+        const response = await fetch('http://127.0.0.1:8000/api/team', {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -10,68 +10,72 @@ const ServicesUnit = {
         const data = await response.json()
         return data
     },
-    getUnits: async () => {
+    post: async (team) => {
         const token = localStorage.getItem('token')
-
-        const response = await fetch(`http://192.168.100.39:8000/api/unit`, {
+        const response = await fetch('http://127.0.0.1:8000/api/team', {
+            method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
+            body: JSON.stringify(team)
         })
         const data = await response.json()
+        console.log(response)
         return data
     },
-    create: async unit => {
+    delete: async id => {
         const token = localStorage.getItem('token')
-        const response = await fetch('http://192.168.100.39:8000/api/unit',
-            {
-                method: 'POST',
-                body: JSON.stringify(unit),
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-            })
-        const data = await response.json()
-        return data
-    },
-    update: async unit => {
-        const token = localStorage.getItem('token')
-        const response = await fetch(`http://192.168.100.39:8000/api/unit/${unit.id}`, {
-            method: 'PUT',
-            body: JSON.stringify(unit),
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-        })
-        const data = await response.json()
-        return data
-    },
-    getByScout: async scout_id => {
-        const token = localStorage.getItem('token')
-        const response = await fetch(`http://192.168.100.39:8000/api/unit/scout/${scout_id}`, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-        })
-        const data = await response.json()
-        return data
-    },
-    delete: async unit_id => {
-        const token = localStorage.getItem('token')
-        const response = await fetch(`http://192.168.100.39:8000/api/unit/${unit_id}`, {
+        const response = await fetch(`http://127.0.0.1:8000/api/team/${id}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`,
+            },
+        })
+        const data = await response.json()
+        console.log(response)
+        return data
+    },
+    update: async team => {
+        const token = localStorage.getItem('token')
+        const response = await fetch(`http://127.0.0.1:8000/api/team/${team.id}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+
+            },
+            body: JSON.stringify(team)
+        })
+        const data = await response.json()
+        console.log(response)
+        return data
+    },
+    teamsByUnit: async unit => {
+        const token = localStorage.getItem('token')
+        const response = await fetch(`http://127.0.0.1:8000/api/team/unit/${unit}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+
+            },
+        })
+        const data = await response.json()
+        return data
+    },
+    addTeamScout: async teamScout => {
+        const token = localStorage.getItem('token')
+        const response = await fetch(`http://127.0.0.1:8000/api/team/scout`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
+            method: 'POST',
+            body: JSON.stringify(teamScout)
         })
         const data = await response.json()
         return data
     }
 }
 
-export default ServicesUnit
+export default ServicesTeam

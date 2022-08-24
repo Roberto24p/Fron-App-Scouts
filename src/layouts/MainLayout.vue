@@ -84,9 +84,17 @@ const linksList = [
   {
     title: 'Unidades',
     caption: 'forum.quasar.dev',
-    icon: 'group',
+    icon: 'diversity_3',
     link: {
       name: 'unit'
+    }
+  },
+  {
+    title: 'Equipos',
+    caption: 'forum.quasar.dev',
+    icon: 'group',
+    link: {
+      name: 'team'
     }
   },
   {

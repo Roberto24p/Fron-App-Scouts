@@ -16,8 +16,9 @@ const routes = [
       { path: '/profile', component: ()=> import('pages/Profile.vue'), name: 'Profile'},
       { path: '/profileEdit', component: ()=> import('pages/ProfileEdit.vue'), name: 'ProfileEdit'},
       { path: '/inscriptionScout', component: ()=> import('pages/InscriptionScout.vue'), name: 'InscriptionScout'},
-      { path: '/advancePlanScout', component: ()=> import('pages/AdvancePlanScout.vue'), name: 'AdvancePlanScout'},
+      { path: '/advancePlanScout/:scoutId', component: ()=> import('pages/AdvancePlanScout.vue'), name: 'AdvancePlanScout'},
       { path: '/inscription', component: ()=> import('pages/Inscription.vue'), name: 'Inscription'},
+      { path: '/team', component: ()=> import('pages/Teams.vue'), name: 'team'},
 
     ]
   },

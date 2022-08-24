@@ -1,11 +1,13 @@
 <template>
     <div class="q-pa-md">
-        <q-btn label="Agregar" color="primary" class="q-ma-md" @click="dialog = true; bttForm=true"></q-btn>
+        <q-btn label="Agregar" color="primary" class="q-ma-md" @click="dialog = true; bttForm = true"></q-btn>
         <q-table title="Beneficiarios Scouts" :rows="rowScouts" :columns="columns" row-key="name">
             <template v-slot:body-cell-actions="props">
                 <q-td :props="props">
                     <q-btn color="yellow" icon="mode_edit" class="q-mx-sm" @click="onEdit(props.row)"></q-btn>
-                    <q-btn color="red" icon="delete" @click="onDelete(props.row)"></q-btn>
+                    <q-btn color="red" icon="delete" class="q-mx-sm" @click="onDelete(props.row)"></q-btn>
+                    <q-btn color="blue" icon="settings" @click="showModalScoutTeam(props.row)"></q-btn>
+                    <q-btn color="green" icon="task" @click="redirect(props.row)"></q-btn>
                 </q-td>
             </template>
 
@@ -60,6 +62,31 @@
             {{ scout }}
         </q-card>
     </q-dialog>
+    <q-dialog v-model="modalTeam">
+        <q-card style="width: 700px; max-width: 80vw;">
+            <q-card-section>
+                <div class="text-h6">Asigna al scout</div>
+            </q-card-section>
+
+            <q-card-section class="q-pt-none">
+                <q-form>
+                    <div class="text-center">
+                        <h5>{{ scout.name }} {{ scout.lastName }}</h5>
+                    </div>
+                    <q-select v-model="unit" :options="unitsSelect" option-label="name" emit-value map-options
+                        option-value="id" label="Selecciona una Unidad" @input="onChangeFocus">
+                    </q-select>
+                    <q-select v-model="team" label="Selecciona un Equipo" emit-value map-options option-label="name"
+                        option-value="id" :options="teamsSelect" />
+                </q-form>
+            </q-card-section>
+
+            <q-card-actions align="right" class="bg-white text-teal">
+                <q-btn flat label="Guardar" @click="saveScoutTeam" />
+            </q-card-actions>
+        </q-card>
+    </q-dialog>
+
 
 </template>
 
@@ -69,6 +96,12 @@ import ServicesGroup from 'src/services/ServicesGroup';
 import ServicesScout from 'src/services/ServicesScout';
 import ServicesUnit from 'src/services/ServicesUnit';
 import { onBeforeMount, reactive, ref } from 'vue'
+import ServicesTeam from 'src/services/ServicesTeam';
+import { useRouter } from "vue-router"
+import ServicesAdvancePlan from 'src/services/ServicesAdvancePlan';
+
+const router = useRouter()
+
 const columns = [
     {
         name: 'name',
@@ -79,9 +112,15 @@ const columns = [
         format: val => `${val}`,
         sortable: true
     },
-    { name: 'age', align: 'left', label: 'Edad', field: 'age', sortable: true },
-    { name: 'group', align: 'left', label: 'Grupo', field: ({ group }) => group.name, sortable: true },
-    { name: 'unit', align: 'center', label: 'Unidad', field: ({ unit }) => unit.name, sortable: true },
+    {
+        name: 'age', align: 'left', label: 'Edad', field: row => {
+            const born = new Date(row.born_date).getFullYear();
+            const now = new Date().getFullYear()
+            return now - born
+        }, sortable: true
+    },
+    { name: 'group', align: 'left', label: 'Grupo', field: row => row.group_name, sortable: true },
+    { name: 'unit', align: 'center', label: 'Unidad', field: row => row.type, sortable: true },
     { name: 'actions', label: 'Acciones', align: 'center' },
 ]
 const bloodType = [
@@ -95,6 +134,7 @@ const bloodType = [
     '+AB'
 ]
 const bttForm = ref(false)
+const modalTeam = ref(false)
 const typeGender = [
     '1',
     '0'
@@ -103,6 +143,9 @@ const rowScouts = ref([])
 const groupsSelect = ref([])
 const unitsSelect = ref([])
 const dialog = ref(false)
+const teamsSelect = ref([])
+const unit = ref('')
+const team = ref('')
 const scout = reactive({
     name: '',
     unitId: '',
@@ -116,11 +159,12 @@ const scout = reactive({
     nacionality: '',
     groupId: '',
     gender: '',
-    id: ''
+    id: '',
+    type: ''
 })
 
 const onChangeGroup = async (groupId) => {
-    const unitsFetch = await ServicesUnit.getUnitByGroup(groupId)
+    const unitsFetch = await ServicesUnit.getUnitByGroup(1)
     unitsSelect.value = unitsFetch
 }
 
@@ -134,7 +178,7 @@ const createScout = async () => {
 
 const updateScout = async () => {
     const message = await ServicesScout.put(scout.id, scout)
-    if(message.success){
+    if (message.success) {
         getScouts()
         dialog.value = false
     }
@@ -142,7 +186,15 @@ const updateScout = async () => {
 
 const getScouts = async () => {
     const scoutsFech = await ServicesScout.getScouts()
-    rowScouts.value = scoutsFech.data
+    console.log(scoutsFech)
+    rowScouts.value = scoutsFech.scouts
+}
+
+const getByGroups = async () => {
+    const response = await ServicesScout.getByGroup(1)
+    rowScouts.value = response.scouts
+
+    console.log(response)
 }
 
 const onEdit = data => {
@@ -168,10 +220,52 @@ const getGroups = async () => {
     const groupsFech = await ServicesGroup.getGroups()
     groupsSelect.value = groupsFech
 }
+const onChangeFocus = () => {
+    ServicesTeam.teamsByUnit(unit.value)
+        .then(response => {
+            teamsSelect.value = response.teams
+            console.log(response)
+        })
+}
 
+const showModalScoutTeam = (row) => {
+    modalTeam.value = true
+    scout.name = row.name
+    scout.lastName = row.last_name
+    scout.id = row.id
+
+}
+
+const saveScoutTeam = () => {
+    ServicesTeam.addTeamScout({
+        team_id: team.value,
+        scout_id: scout.id,
+    }).then(response => {
+        if (response.success) {
+            modalTeam.value = false
+        }
+    })
+}
+
+const redirect = (row) => {
+    alert(row.id)
+    ServicesScout.validateHasTeam(row.id)
+        .then(response => {
+            if(response.scoutTeam)
+                router.push({ name: 'AdvancePlanScout', params: { scoutId: row.id } })
+            else
+                alert('El usuario no ha sido asignado a un team')
+        })
+}
 watch(() => scout.groupId, onChangeGroup)
+watch(() => unit.value, onChangeFocus)
 onBeforeMount(() => {
-    getScouts()
+    // getScouts()
+    getByGroups()
     getGroups()
+    ServicesUnit.getUnitByGroup(1)
+        .then(response => {
+            unitsSelect.value = response
+        })
 })
 </script>

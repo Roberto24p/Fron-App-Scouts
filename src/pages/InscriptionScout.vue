@@ -1,4 +1,19 @@
 <template>
+    <q-dialog v-model="imageDialog">
+        <q-card style="width: 700px; max-width: 80vw;">
+            <q-card-section>
+                <div class="text-h6">Imagen</div>
+            </q-card-section>
+
+            <q-card-section class="q-pt-none">
+                <q-img :src="image" no-native-menu>
+                    <div class="absolute-top text-center">
+                        Paga
+                    </div>
+                </q-img>
+            </q-card-section>
+        </q-card>
+    </q-dialog>
     <q-dialog v-model="modalObservation">
         <q-card>
             <q-card-section>
@@ -35,7 +50,7 @@
                     </q-item>
                 </q-card>
             </div>
-            <div class="col-8">
+            <div class="col-8" :class="{'col-12':inscriptionExist }">
                 <q-card class="my-card  q-py-sm" v-if="inscriptionExist">
 
 
@@ -43,71 +58,71 @@
                     <q-separator />
                     <q-separator />
                     <div class="row q-pa-md">
-                        <div class="col-6">
-                            <div class="text-h6">
+                        <div class="col-6 q-mb-lg">
+                            <div class="text-h5" style="text-transform: capitalize">
                                 <strong>Estado: </strong>
-                                {{ profile.status }}
+                            <q-btn :color="profile.status == 'confirmado'? 'green': profile.status == 'espera'? 'warning': 'negative'">{{ profile.status }}</q-btn>
                             </div>
                         </div>
-                        <div class="col-6">
-                            <div class="text-h6">
+                        <div class="col-6 q-mb-lg">
+                            <div class="text-h5">
                                 <strong>Nombre: </strong>
                                 {{ profile.name }}
                             </div>
                         </div>
-                        <div class="col-6">
-                            <div class="text-h6">
+                        <div class="col-6 q-mb-lg">
+                            <div class="text-h5">
                                 <strong>Apellido: </strong>
                                 {{ profile.lastName }}
                             </div>
                         </div>
-                        <div class="col-6">
-                            <div class="text-h6">
+                        <div class="col-6 q-mb-lg">
+                            <div class="text-h5">
                                 <strong>Cédula: </strong>
                                 {{ profile.dni }}
                             </div>
                         </div>
-                        <div class="col-6">
-                            <div class="text-h6">
+                        <div class="col-6 q-mb-lg">
+                            <div class="text-h5">
                                 <strong>Nacimiento: </strong>
 
                                 {{ profile.bornDate }}
                             </div>
                         </div>
-                        <div class="col-6">
-                            <div class="text-h6">
+                        <div class="col-6 q-mb-lg">
+                            <div class="text-h5">
                                 <strong>Tipo de Sangre: </strong>
                                 {{ profile.typeBlood }}
                             </div>
                         </div>
-                        <div class="col-6">
-                            <div class="text-h6">
+                        <div class="col-6 q-mb-lg">
+                            <div class="text-h5">
                                 <strong>Nacionalidad: </strong>
                                 {{ profile.nacionality }}
                             </div>
                         </div>
-                        <div class="col-6">
-                            <div class="text-h6">
+                        <div class="col-6 q-mb-lg">
+                            <div class="text-h5">
                                 <template v-if="profile.gender == 1"><strong>Género: </strong> Hombre</template>
                                 <template v-else><strong>Género: </strong> Mujer</template>
                             </div>
                         </div>
-                        <div class="col-6">
-                            <div class="text-h6">
+                        <div class="col-6 q-mb-lg">
+                            <div class="text-h5">
                                 <template v-if="profile.gender == 1"><strong>Género: </strong> Hombre</template>
                                 <template v-else><strong>Género: </strong> Mujer</template>
                             </div>
                         </div>
-                        <div class="col-6">
-                            <div class="text-h6">
+                        <div class="col-6 q-mb-lg">
+                            <div class="text-h5">
                                 <strong>Teléfono: </strong>
                                 {{ profile.phone }}
                             </div>
                         </div>
-                        <div class="col-6">
-                            <div class="text-h6 row">
+                        <div class=" q-mb-lg" :class="{'col-6': inscriptionExist, 'col-8': !inscriptionExist}">
+                            <div class="text-h5 row">
                                 <strong class="col-3">Grupo: </strong>
-                                {{ profile.group }}
+                                {{ profile.groupName }}
                             </div>
                         </div>
                     </div>
@@ -122,110 +137,107 @@
                     <q-separator />
                     <q-separator />
                     <div class="row q-pa-md">
-                        <div class="col-6">
-                            <div class="text-h6">
+                        <div class="col-6 q-mb-lg">
+                            <div class="text-h5" style="text-transform: capitalize">
                                 <strong>Estado: </strong>
-                                {{ profile.status }}
+                            <q-btn :color="profile.status == 'confirmado'? 'green': profile.status == 'espera'? 'warning': 'negative'">{{ profile.status }}</q-btn>
                             </div>
 
                         </div>
-                        <div class="col-6">
-                            <div class="text-h6">
+                        <div class="col-6 q-mb-lg">
+                            <div class="text-h5">
                                 <strong>Nombre: </strong>
                                 {{ profile.name }}
                             </div>
                         </div>
-                        <div class="col-6">
-                            <div class="text-h6">
+                        <div class="col-6 q-mb-lg">
+                            <div class="text-h5">
                                 <strong>Apellido: </strong>
                                 {{ profile.lastName }}
                             </div>
                         </div>
-                        <div class="col-6">
-                            <div class="text-h6">
+                        <div class="col-6 q-mb-lg">
+                            <div class="text-h5">
                                 <strong>Cédula: </strong>
                                 {{ profile.dni }}
                             </div>
                         </div>
-                        <div class="col-6">
-                            <div class="text-h6">
+                        <div class="col-6 q-mb-lg">
+                            <div class="text-h5">
                                 <strong>Nacimiento: </strong>
 
                                 {{ profile.bornDate }}
                             </div>
                         </div>
-                        <div class="col-6">
-                            <div class="text-h6">
+                        <div class="col-6 q-mb-lg">
+                            <div class="text-h5">
                                 <strong>Tipo de Sangre: </strong>
                                 {{ profile.typeBlood }}
                             </div>
                         </div>
-                        <div class="col-6">
-                            <div class="text-h6">
+                        <div class="col-6 q-mb-lg">
+                            <div class="text-h5">
                                 <strong>Nacionalidad: </strong>
                                 {{ profile.nacionality }}
                             </div>
                         </div>
-                        <div class="col-6">
-                            <div class="text-h6">
+                        <div class="col-6 q-mb-lg">
+                            <div class="text-h5">
                                 <template v-if="profile.gender == 1"><strong>Género: </strong> Hombre</template>
                                 <template v-else><strong>Género: </strong> Mujer</template>
                             </div>
                         </div>
-                        <div class="col-6">
-                            <div class="text-h6">
+                        <div class="col-6 q-mb-lg">
+                            <div class="text-h5">
                                 <template v-if="profile.gender == 1"><strong>Género: </strong> Hombre</template>
                                 <template v-else><strong>Género: </strong> Mujer</template>
                             </div>
                         </div>
-                        <div class="col-6">
-                            <div class="text-h6">
+                        <div class="col-6 q-mb-lg">
+                            <div class="text-h5">
                                 <strong>Teléfono: </strong>
                                 {{ profile.phone }}
                             </div>
                         </div>
-                        <div class="col-6">
-                            <div class="text-h6 row">
+                        <div class="col-6 q-mb-lg">
+                            <div class="text-h5 row">
                                 <strong class="col-3">Grupo: </strong>
                                 <q-select v-model="profile.group" class="col-8" option-value="id" emit-value map-options
                                     :options="groups" label="Grupo" option-label="name" />
                             </div>
                         </div>
-                        <div class="col-6">
-                            <div class="text-h6 row">
+                        <div class="col-6 q-mb-lg">
+                            <div class="text-h5 row">
                                 <q-btn @click="modalObservation = true">Observaciones</q-btn>
                             </div>
                         </div>
                     </div>
                 </q-card>
             </div>
-            <div class="col-4">
+            <div class="col-4" :class="{hidden: inscriptionExist}">
                 <q-card class="my-card  q-pa-md ">
-                    <q-select :options="optionsDocuments" v-model="optionDocument" class="q-mb-sm" style="max-width: 300px" ></q-select>
-                    <q-uploader @uploaded="fileComplete" :factory="factoryPermissions"  style="max-width: 300px" field-name="image" v-show="optionDocument == 'Permiso'"
-                        :hide-upload-btn="inscriptionExist"  label="Permiso"  />
-                    <q-uploader @uploaded="fileComplete" :factory="factoryPay" style="max-width: 300px" field-name="image" 
-                        :hide-upload-btn="inscriptionExist" color="amber" v-show="optionDocument == 'Fotos'"
-                        label="Fotos" />
-                    <q-uploader @uploaded="fileComplete" :factory="factoryPay" style="max-width: 300px" field-name="image" v-show="optionDocument == 'Paga'"
-                        :hide-upload-btn="inscriptionExist"  color="amber"
-                        label="Pago" />
+                    <q-select :options="optionsDocuments" v-model="optionDocument" class="q-mb-sm"
+                        style="max-width: 300px"></q-select>
+                    <q-uploader @uploaded="fileComplete" :factory="factoryPermissions" style="max-width: 300px"
+                        field-name="image" v-show="optionDocument == 'Permiso'" :hide-upload-btn="inscriptionExist"
+                        label="Permiso" />
+                    <q-uploader @uploaded="fileComplete" :factory="factoryPay" style="max-width: 300px"
+                        field-name="image" :hide-upload-btn="inscriptionExist" color="amber"
+                        v-show="optionDocument == 'Fotos'" label="Fotos" />
+                    <q-uploader @uploaded="fileComplete" :factory="factoryPay" style="max-width: 300px"
+                        field-name="image" v-show="optionDocument == 'Paga'" :hide-upload-btn="inscriptionExist"
+                        color="amber" label="Pago" />
 
                 </q-card>
             </div>
-            <div class="col-4">
-                <q-card class="my-card  q-pa-sm">
-                    <q-img :src="profile.imagePermission" no-native-menu>
-                        <div class="absolute-top text-center">
-                            Permisos
-                        </div>
-                    </q-img>
-
-                </q-card>
+            <div class="row col-12 justify-evenly">
+                <q-btn color="primary" class="col-3" @click="showDialog(profile.imagePermission)" v-show="profile.imagePermission">Ver Permiso</q-btn>
+                <q-btn color="primary" class="col-3" @click="showDialog(profile.imagePay)" v-show="profile.imagePay" >Ver Paga</q-btn>
+                <q-btn color="primary" class="col-3" @click="showDialog(profile.imagePhoto)" v-show="profile.imagePhoto">Ver Foto</q-btn>
             </div>
-            <div class="col-4">
+            <!-- <div class="col-4">
                 <q-card class="my-card  q-pa-sm">
-                    <q-img :src="profile.imagePay" no-native-menu>
+                    <q-img :src="profile.imagePay" no-native-menu @click="showDialog(profile.imagePay)">
                         <div class="absolute-top text-center">
                             Paga
                         </div>
@@ -234,25 +246,28 @@
             </div>
             <div class="col-4">
                 <q-card class="my-card  q-pa-sm">
-                    <q-img :src="profile.imagePhoto" no-native-menu>
+                    <q-img :src="profile.imagePhoto" no-native-menu  @click="showDialog(profile.imagePhoto)">
                         <div class="absolute-top text-center">
                             Foto
                         </div>
                     </q-img>
                 </q-card>
-            </div>
+            </div> -->
         </div>
     </div>
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue';
+import { reactive, ref, onMounted } from 'vue';
 import ServicesProfile from 'src/services/ServicesProfile'
 import ServicesGroup from 'src/services/ServicesGroup'
 import ServicesInscription from 'src/services/ServicesInscription'
 import ServicesPeriod from 'src/services/ServicesPeriod'
 import { useRouter } from "vue-router"
-import { useQuasar, QSpinnerGears } from 'quasar'
+import { useQuasar } from 'quasar'
+const imageDialog = ref(false)
+const image = ref('')
+
 const optionDocument = ref('Selecciona un documento')
 const optionsDocuments = [
     'Paga',
@@ -277,7 +292,8 @@ const profile = reactive({
     imagePay: '',
     imagePermission: '',
     imagePhoto: '',
-    observations: 'No hay ninguna observación'
+    observations: 'No hay ninguna observación',
+    groupName: '' 
 })
 const period = reactive({
     start: '',
@@ -290,14 +306,18 @@ const inscriptionExist = ref(false)
 const updateInscriptionInfo = () => {
     ServicesProfile.getInscriptionInfo()
         .then(data => {
+            console.log(data.statusInscription)
 
             inscriptionExist.value = data.statusInscription == null ? false : true
             if (data.statusInscription != null) {
-                console.log(data.statusInscription)
                 inscriptionExist.value = data.statusInscription.state_inscription == 'denegado' ? false : true
                 profile.status = data.statusInscription.state_inscription
                 profile.group = data.statusInscription.group_id
+                profile.groupName = data.statusInscription.name
                 profile.observations = data.statusInscription.observations
+                profile.imagePay = data.statusInscription.image_pay
+                profile.imagePermission = data.statusInscription.image_permission
+                profile.imagePhoto = data.statusInscription.image_photo
                 console.log(data.statusInscription.group_id)
             }
             profile.name = data.personalInfo.name
@@ -309,8 +329,7 @@ const updateInscriptionInfo = () => {
             profile.phone = data.personalInfo.phone
             profile.gender = data.personalInfo.gender
             profile.email = data.personalInfo.user.email
-            profile.imagePay = data.personalInfo.scout.image_pay
-            profile.imagePermission = data.personalInfo.scout.image_permissions
+
         })
 }
 
@@ -322,12 +341,24 @@ ServicesGroup.getGroups()
         groups.value = data
     })
 const inscribir = () => {
+    if (profile.imagePay == '' || profile.imagePermission == '' || profile.imagePhoto == '') {
+        console.log(profile.imagePay)
+        console.log(profile.imagePermission)
+        console.log(profile.imagePhoto)
+        $q.notify({
+            type: 'negative',
+            message: 'Sube las imagenes',
+            timeout: 2000
+        })
+        return 0
+    }
 
-    ServicesInscription.registerInscription(profile.group)
+    ServicesInscription.registerInscription(profile)
         .then(data => {
-            inscriptionExist.value = true
             console.log(data.success == 1)
             if (data.success == 1) {
+            inscriptionExist.value = true
+            profile.status = 'espera'
                 $q.notify({
                     type: 'positive',
                     message: 'Inscripcion enviada correctamente'
@@ -339,9 +370,7 @@ const inscribir = () => {
                 })
             }
         })
-        .catch(e => {
-
-        })
+       
 }
 const redirect = (ruta) => {
     router.push(ruta)
@@ -375,26 +404,35 @@ const factoryPay = (file) => {
 const getPeriod = () => {
     ServicesPeriod.getPeriod()
         .then(response => {
-            console.log('Dentro de periodo')
             const getYearStart = new Date(response.response.date_start)
             const getYearEnd = new Date(response.response.date_end)
+            console.log(response.response.description)
             period.start = getYearStart.getFullYear()
             period.end = getYearEnd.getFullYear()
-            console.log(response)
+            console.log(response.response)
         })
 }
- 
+
 const fileComplete = (info) => {
-    if(optionDocument.value == 'Permiso')
-        profile.imagePermission = info.xhr.response 
-    else if(optionDocument.value == 'Paga')
+    if (optionDocument.value == 'Permiso')
+        profile.imagePermission = info.xhr.response
+    else if (optionDocument.value == 'Paga')
         profile.imagePay = info.xhr.response
     else
-        profile.imagePhoto= info.xhr.response
-    console.log( info.xhr.response)
+        profile.imagePhoto = info.xhr.response
+    console.log(info.xhr.response)
 }
-getPeriod()
-updateInscriptionInfo()
+
+const showDialog = (img) => {
+    console.log(img)
+    image.value = img
+    imageDialog.value = true
+}
+
+onMounted(() => {
+    getPeriod()
+    updateInscriptionInfo()
+})
 </script>
 
 <style scoped>

@@ -2,7 +2,7 @@ const ServicesScout = {
     getScouts: async () => {
         const token = localStorage.getItem('token')
 
-        const response = await fetch('http://127.0.0.1:8000/api/scout',  {
+        const response = await fetch('http://127.0.0.1:8000/api/scout', {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -63,6 +63,28 @@ const ServicesScout = {
         })
         const data = await response.json()
         return data
+    },
+    getByGroup: async groupId => {
+        const token = localStorage.getItem('token')
+
+        const response = await fetch(`http://127.0.0.1:8000/api/scout/group/${groupId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        })
+        const data = await response.json()
+        return data
+    },
+    validateHasTeam: async scout => {
+        const token = localStorage.getItem('token')
+        const response = await fetch(`http://127.0.0.1:8000/api/scout/validate/${scout}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        })
+        const data = await response.json()
+        return data
+
     }
 }
 

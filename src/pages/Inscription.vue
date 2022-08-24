@@ -1,12 +1,19 @@
 <template>
     <div class="q-pa-md">
         <q-table title="Inscripciones" :rows="row" :columns="columns" row-key="name">
-            <template v-slot:body-cell-actions="props">
+            <template v-slot:body-cell-state_inscription="props">
                 <q-td :props="props">
                     <q-btn
                         :color="props.row.state_inscription == 'confirmado' ? 'green' :
                         props.row.state_inscription == 'espera' ? 'warning' : props.row.state_inscription == 'denegado' ? 'negative' : 'nada'"
-                        class="q-mx-sm" @click="onEdit(props.row)">{{ props.row.state_inscription }}</q-btn>
+                        class="q-mx-sm" >{{ props.row.state_inscription }}</q-btn>
+                </q-td>
+            </template>
+             <template v-slot:body-cell-actions="props">
+                <q-td :props="props">
+                    <q-btn
+                        
+                        class="q-mx-sm" @click="onEdit(props.row)">Actualizar</q-btn>
                 </q-td>
             </template>
         </q-table>
@@ -25,18 +32,61 @@
                 </q-card-section>
 
                 <q-card-section class="col q-pt-none">
-                    <q-form class="q-gutter-md row justify-center">
-                        <q-input class="col-4" filled v-model="inscriptionData.name" label="Nombre"></q-input>
-                        <q-select class="col-4" v-model="inscriptionData.state_inscription" :options="status">
+                    <div class="q-gutter-md row justify-center">
+                        <div class="col-4">
+                            <div class="text-h5">
+                                <strong> Nombre:</strong> {{ inscriptionData.name }}
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-h5">
+                                <strong> Apellido:</strong> {{ inscriptionData.name }}
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-h5">
+                                <strong> Unidad:</strong> {{ inscriptionData.type }}
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-h5">
+                                <strong> Grupo:</strong> {{ inscriptionData.group }}
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-h5">
+                                <strong> Fecha de Nacimiento:</strong> {{ inscriptionData.born_date }}
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-h5">
+                                <strong> Género:</strong> {{ inscriptionData.gender == 1? 'Hombre': 'Mujer' }}
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-h5">
+                                <strong> Tipo de Sangre:</strong> {{ inscriptionData.type_blood }}
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-h5">
+                                <strong> Teléfono:</strong> {{ inscriptionData.phone }}
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-h5">
+                                <strong> Cédula:</strong> {{ inscriptionData.dni }}
+                            </div>
+                        </div>
+                        <q-select style="text-transform: capitalize" class="col-4" v-model="inscriptionData.state_inscription" :options="status">
                         </q-select>
-                        <q-input class="col-4" filled v-model="inscriptionData.type" label="Unidad"></q-input>
-                        <q-input class="col-4" filled v-model="inscriptionData.group" label="Grupo"></q-input>
+                    
                         <q-btn class="col-6" @click="showDialog(inscriptionData.image_permissions)">Ver Permiso</q-btn>
                         <q-btn class="col-6" @click="showDialog(inscriptionData.image_pay)">Ver Pago</q-btn>
+                        <q-btn class="col-6" @click="showDialog(inscriptionData.image_photo)">Ver Foto</q-btn>
                         <input type="hidden" v-model="inscriptionData.id">
-                        <q-input class="col-8" v-model="inscriptionData.observations" filled type="textarea" />
-                        {{ inscriptionData.observations }}
-                    </q-form>
+                        <q-input class="col-8" v-model="inscriptionData.observations" filled type="textarea" autogrow label="Ingresa una observación" />
+                    </div>
                 </q-card-section>
                 <q-card-actions align="right" class="bg-white text-teal">
                     <q-btn flat label="Guardar" @click="updateInscription"></q-btn>
@@ -90,7 +140,13 @@ const inscriptionData = reactive({
     observations: '',
     id: '',
     image_permissions: '',
-    image_pay: ''
+    gender: '',
+    born_date: '',
+    image_pay: '',
+    image_photo: '',
+    type_blood: '',
+    phone: '',
+    dno: ''
 
 })
 const imageDialog = ref(false)
@@ -107,8 +163,15 @@ const onEdit = (row) => {
     inscriptionData.type = row.type
     inscriptionData.state_inscription = row.state_inscription
     inscriptionData.id = row.id
-    inscriptionData.image_permissions = row.image_permissions
+    inscriptionData.image_permissions = row.image_permission
     inscriptionData.image_pay = row.image_pay
+    inscriptionData.image_photo = row.image_photo
+    inscriptionData.born_date = row.born_date
+    inscriptionData.type = row.type
+    inscriptionData.gender = row.gender
+    inscriptionData.type_blood = row.type_blood
+    inscriptionData.phone = row.phone
+    inscriptionData.dni = row.dni
 }
 const updateInscription = () => {
     ServicesInscription.putInscription({

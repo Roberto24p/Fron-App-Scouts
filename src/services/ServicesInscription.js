@@ -52,7 +52,8 @@ const ServicesInscription = {
         const data = await response.json()
         return data
     },
-    registerInscription: async (groupId) => {
+    registerInscription: async (inscription) => {
+        
         const token = localStorage.getItem('token')
         try {
             const response = await fetch('http://127.0.0.1:8000/api/inscription/register', {
@@ -61,8 +62,10 @@ const ServicesInscription = {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    group_id: groupId,
-
+                    group_id: inscription.group,
+                    imagePermission: inscription.imagePermission,
+                    imagePhoto: inscription.imagePhoto,
+                    imagePay: inscription.imagePay
                 }),
                 method: 'POST'
             })
