@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md">
     <q-btn label="Agregar" color="primary" class="q-ma-md" @click="openDialogCreate" />
-
+    <h1></h1>
     <q-table title="Grupos" :rows="groups" :columns="columns" row-key="name" :loading="loading">
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
@@ -118,6 +118,8 @@
 import { reactive, ref } from 'vue'
 import ServicesGroup from 'src/services/ServicesGroup'
 import { useQuasar } from 'quasar'
+import { useUsersStore } from '../store/user-store';
+const userStore = useUsersStore()
 const $q = useQuasar()
 
 const loading = ref(false)

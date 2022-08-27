@@ -3,6 +3,7 @@
     clickable
     tag="a"
     :to="link"
+    v-show="show"
   >
     <q-item-section
       v-if="icon"
@@ -41,6 +42,9 @@ export default defineComponent({
     icon: {
       type: String,
       default: ''
+    },
+    show: {
+      type: Boolean
     }
   }
 })

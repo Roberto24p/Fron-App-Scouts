@@ -5,7 +5,8 @@
             <template v-slot:body-cell-actions="props">
                 <q-td :props="props">
                     <q-btn color="yellow" icon="mode_edit" class="q-mx-sm" @click="onEdit(props.row)"></q-btn>
-                    <q-btn color="red" icon="delete" @click="onDelete(props.row)"></q-btn>
+                    <q-btn color="red" icon="delete" class="q-mx-sm" @click="onDelete(props.row)"></q-btn>
+                    <q-btn color="green" icon="group" @click="redirect(props.row.id)"></q-btn>
                 </q-td>
             </template>
             <template v-slot:body-cell-img="props">
@@ -89,6 +90,8 @@
 import ServicesGroup from 'src/services/ServicesGroup'
 import ServicesUnit from 'src/services/ServicesUnit';
 import { onBeforeMount, reactive, ref } from 'vue';
+import { useRouter } from "vue-router"
+const router = useRouter()
 
 const deleteDialog = ref(false)
 
@@ -225,6 +228,11 @@ const updateUnit = () => {
             getUnits()
             console.log(response)
         })
+}
+
+const redirect = (unit_id) => {
+    router.push({ name: 'teamScouts', params: { unitId: unit_id } })
+
 }
 onBeforeMount(() => {
     getGroups()

@@ -5,20 +5,70 @@ const routes = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', component: () => import('pages/Index.vue') },
-      { path: '/group', component: () => import('pages/Groups.vue'), name: 'group'},
-      { path: '/directing', component: () => import('pages/Directing.vue'), name: 'directing'},
-      { path: '/scout', component: ()=> import('pages/Scout.vue'), name: 'scout'},
-      { path: '/unit', component: ()=> import('pages/Unit.vue'), name: 'unit'},
-      { path: '/period', component: ()=> import('pages/Period.vue'), name: 'period'},
-      { path: '/advancePlan', component: ()=> import('pages/AdvancePlan.vue'), name: 'advancePlan'},
-      { path: '/advancePlanDetails/:idAdvancePlan', component: ()=> import('pages/AdvancePlanDetails.vue'), name: 'advancePlanDetails'},
-      { path: '/advancePlanEdit/:idAdvancePlan', component: ()=> import('pages/AdvancePlanEdit.vue'), name: 'AdvancePlanEdit'},
-      { path: '/profile', component: ()=> import('pages/Profile.vue'), name: 'Profile'},
-      { path: '/profileEdit', component: ()=> import('pages/ProfileEdit.vue'), name: 'ProfileEdit'},
-      { path: '/inscriptionScout', component: ()=> import('pages/InscriptionScout.vue'), name: 'InscriptionScout'},
-      { path: '/advancePlanScout/:scoutId', component: ()=> import('pages/AdvancePlanScout.vue'), name: 'AdvancePlanScout'},
-      { path: '/inscription', component: ()=> import('pages/Inscription.vue'), name: 'Inscription'},
-      { path: '/team', component: ()=> import('pages/Teams.vue'), name: 'team'},
+      {
+        path: '/group', component: () => import('pages/Groups.vue'), name: 'group',
+        meta: { auth: true, roles: [6] }
+      },
+      {
+        path: '/directing', component: () => import('pages/Directing.vue'), name: 'directing',
+        meta: { auth: true }
+      },
+      {
+        path: '/scout', component: () => import('pages/Scout.vue'), name: 'scout',
+        meta: { auth: true }
+      },
+      {
+        path: '/unit', component: () => import('pages/Unit.vue'), name: 'unit',
+        meta: { auth: true, roles: [6] }
+      },
+      {
+        path: '/period', component: () => import('pages/Period.vue'), name: 'period',
+        meta: { auth: true }
+      },
+      {
+        path: '/advancePlan', component: () => import('pages/AdvancePlan.vue'), name: 'advancePlan',
+        meta: { auth: true }
+      },
+      {
+        path: '/advancePlanDetails/:idAdvancePlan', component: () => import('pages/AdvancePlanDetails.vue'), name: 'advancePlanDetails',
+        meta: { auth: true }
+      },
+      {
+        path: '/advancePlanEdit/:idAdvancePlan', component: () => import('pages/AdvancePlanEdit.vue'), name: 'AdvancePlanEdit',
+        meta: { auth: true }
+      },
+      {
+        path: '/profile', component: () => import('pages/Profile.vue'), name: 'Profile',
+        meta: { auth: true, roles: [6] }
+      },
+      {
+        path: '/profileEdit', component: () => import('pages/ProfileEdit.vue'), name: 'ProfileEdit',
+        meta: { auth: true }
+      },
+      {
+        path: '/inscriptionScout', component: () => import('pages/InscriptionScout.vue'), name: 'InscriptionScout',
+        meta: { auth: true }
+      },
+      {
+        path: '/advancePlanScout/:scoutId', component: () => import('pages/AdvancePlanScout.vue'), name: 'AdvancePlanScout',
+        meta: { auth: true }
+      },
+      {
+        path: '/inscription', component: () => import('pages/Inscription.vue'), name: 'Inscription',
+        meta: { auth: true }
+      },
+      {
+        path: '/team', component: () => import('pages/Teams.vue'), name: 'team',
+        meta: { auth: true }
+      },
+      {
+        path: '/teamScouts', component: () => import('pages/TeamScout.vue'), name: 'teamScouts',
+        meta: { auth: true }
+      },
+      {
+        path: '/user', component: () => import('pages/User.vue'), name: 'user',
+        meta: { auth: true, roles: [6] }
+      },
 
     ]
   },
@@ -40,8 +90,8 @@ const routes = [
     component: () => import('pages/Login.vue'),
     beforeEnter: (to, from, next) => {
       const token = localStorage.getItem('token')
-      if(token != null)
-          next({path: '/' })
+      if (token != null)
+        next({ path: '/' })
       next()
     }
   }

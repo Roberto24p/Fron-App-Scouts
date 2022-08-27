@@ -19,7 +19,7 @@
           <q-item-label header class="text-grey-8">
           </q-item-label>
 
-          <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" />
+          <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" :show="link.show" />
         </q-list>
       </q-scroll-area>
 
@@ -28,8 +28,8 @@
           <q-avatar size="56px" class="q-mb-sm">
             <img src="https://cdn.quasar.dev/img/boy-avatar.png">
           </q-avatar>
-          <div class="text-weight-bold">{{ store.user.name }}</div>
-          <div>{{ store.user.email }}</div>
+          <div class="text-weight-bold">{{ storeUser.name}}</div>
+          <div>{{ storeUser.email }}</div>
           <q-btn color="red" size="xs" @click="signOnut">Cerrar sesion</q-btn>
         </div>
 
@@ -47,15 +47,18 @@
 import EssentialLink from 'components/EssentialLink.vue'
 import { useRouter } from "vue-router"
 
-
+import { useUsersStore } from '../store/user-store'
+const storeUser = useUsersStore()
 const linksList = [
-    {
+  {
     title: 'Perfil',
     caption: '@quasarframework',
     icon: 'face',
     link: {
       name: 'Profile'
-    }
+    },
+    show:true,
+    roles: [1, 6]
   },
   {
     title: 'Grupos',
@@ -63,7 +66,9 @@ const linksList = [
     icon: 'groups',
     link: {
       name: 'group'
-    }
+    },
+    show:true,
+    roles: [1]
   },
   {
     title: 'Dirigentes',
@@ -71,7 +76,9 @@ const linksList = [
     icon: 'explore',
     link: {
       name: 'directing'
-    }
+    },
+    show:true,
+    roles: [1]
   },
   {
     title: 'Scouts',
@@ -79,7 +86,9 @@ const linksList = [
     icon: 'person',
     link: {
       name: 'scout'
-    }
+    },
+    show:true,
+    roles: [1]
   },
   {
     title: 'Unidades',
@@ -87,7 +96,9 @@ const linksList = [
     icon: 'diversity_3',
     link: {
       name: 'unit'
-    }
+    },
+    show:true,
+    roles: [1]
   },
   {
     title: 'Equipos',
@@ -95,7 +106,9 @@ const linksList = [
     icon: 'group',
     link: {
       name: 'team'
-    }
+    },
+    show:true,
+    roles: [1, 2, 3, 4]
   },
   {
     title: 'Inscripciones',
@@ -103,7 +116,9 @@ const linksList = [
     icon: 'description',
     link: {
       name: 'Inscription'
-    }
+    },
+    show:true,
+    roles: [1]
   },
   {
     title: 'Periodos',
@@ -111,18 +126,37 @@ const linksList = [
     icon: 'today',
     link: {
       name: 'period'
-    }
+    },
+    show:true,
+    roles: [1]
   },
   {
     title: 'Reportes',
     caption: '@QuasarFramework',
     icon: 'public',
-    link: 'https://facebook.quasar.dev'
+    link: 'https://facebook.quasar.dev',
+    roles: [1,6 ],
+    show: true
+  },
+  {
+    title: 'Usuarios',
+    caption: '@QuasarFramework',
+    icon: 'shield',
+    link: 'https://facebook.quasar.dev',
+    roles: [1,6 ],
+    show: true,
+    link: {
+      name: 'user'
+    }
   },
 ];
+linksList.forEach(page => {
+  const element = page.roles.find(i=> i==storeUser.role)
+  if(element == undefined)
+    page.show = false
+})
 
 import { defineComponent, ref } from 'vue'
-import { useUserStore } from "src/store/state";
 export default defineComponent({
   name: 'MainLayout',
 
@@ -145,10 +179,9 @@ export default defineComponent({
     }
 
     const leftDrawerOpen = ref(false)
-    const store = useUserStore()
     return {
+      storeUser,
       signOnut,
-      store,
       essentialLinks: linksList,
       leftDrawerOpen,
       toggleLeftDrawer() {

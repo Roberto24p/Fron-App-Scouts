@@ -84,7 +84,16 @@ const ServicesScout = {
         })
         const data = await response.json()
         return data
-
+    },
+    getByUnit: async unit => {
+        const token = localStorage.getItem('token')
+        const response = await fetch(`http://127.0.0.1:8000/api/scout/unit/${unit}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        })
+        const data = await response.json()
+        return data
     }
 }
 

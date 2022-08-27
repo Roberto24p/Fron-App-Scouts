@@ -9,7 +9,7 @@
                 <div class="text-h5 text-center q-pt-xl q-mt-xl">Login</div>
                 <div class="q-pa-sm col-sm-12">
                     <q-input filled v-model="loginForm.username" label="Usuario" hint="" lazy-rules />
-                    <q-input filled v-model="loginForm.password" label="Contraseña" hint="" lazy-rules />
+                    <q-input filled v-model="loginForm.password" label="Contraseña" hint="" lazy-rules type="password" />
                 </div>
                 <div class="q-pa-sm">
                     <a  class="float-right" style="text-decoration: none;" @click="redirect">¡Registrate!</a>
@@ -26,35 +26,41 @@
 import { reactive, ref } from "vue"
 import ServicesAuth from '../services/ServicesAuth'
 import { useRouter } from "vue-router"
-import { useUserStore } from "src/store/state";
+import { useUsersStore } from '../store/user-store';
 
-const store = useUserStore()
+const store = useUsersStore()
 const router = useRouter()
 const loginForm = reactive({
     username: '',
     password: ''
 })
 const response = ref(null)
+const login =  () => {
+    if(store.access(loginForm))
+         router.push('/')
+    else
+        alert('Error')
+}
 const redirect = () => {
     router.push('/register')
 }
-const login = async function (e) {
-    e.preventDefault()
-    const response = await ServicesAuth.auth(loginForm)
-    console.log(response)
-    if (response.success && response.token != null) {
-        localStorage.setItem('token', response.token.token)
-        store.$patch({
-            user: {
-                name: response.user.name,
-                email: response.user.email
-            }
-        })
-        router.push('/')
-    } else {
-        alert('Error')
-    }
-    response.value = response
-    console.log(response)
-}
+// const login = async function (e) {
+//     e.preventDefault()
+//     const response = await ServicesAuth.auth(loginForm)
+//     console.log(response)
+//     if (response.success && response.token != null) {
+//         localStorage.setItem('token', response.token.token)
+//         store.$patch({
+//             user: {
+//                 name: response.user.name,
+//                 email: response.user.email
+//             }
+//         })
+//         router.push('/')
+//     } else {
+//         alert('Error')
+//     }
+//     response.value = response
+//     console.log(response)
+// }
 </script>
