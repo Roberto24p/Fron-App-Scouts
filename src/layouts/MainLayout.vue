@@ -26,9 +26,9 @@
       <q-img class="absolute-top" src="https://cdn.quasar.dev/img/material.png" style="height: 150px">
         <div class="absolute-bottom bg-transparent">
           <q-avatar size="56px" class="q-mb-sm">
-            <img src="https://cdn.quasar.dev/img/boy-avatar.png">
+            <img :src="storeUser.avatar">
           </q-avatar>
-          <div class="text-weight-bold">{{ storeUser.name}}</div>
+          <div class="text-weight-bold">{{ storeUser.name }}</div>
           <div>{{ storeUser.email }}</div>
           <q-btn color="red" size="xs" @click="signOnut">Cerrar sesion</q-btn>
         </div>
@@ -57,8 +57,8 @@ const linksList = [
     link: {
       name: 'Profile'
     },
-    show:true,
-    roles: [1, 6]
+    show: true,
+    roles: [1, 2, 3, 4, 5, 6]
   },
   {
     title: 'Grupos',
@@ -67,7 +67,7 @@ const linksList = [
     link: {
       name: 'group'
     },
-    show:true,
+    show: true,
     roles: [1]
   },
   {
@@ -77,7 +77,7 @@ const linksList = [
     link: {
       name: 'directing'
     },
-    show:true,
+    show: true,
     roles: [1]
   },
   {
@@ -87,7 +87,7 @@ const linksList = [
     link: {
       name: 'scout'
     },
-    show:true,
+    show: true,
     roles: [1]
   },
   {
@@ -97,8 +97,8 @@ const linksList = [
     link: {
       name: 'unit'
     },
-    show:true,
-    roles: [1]
+    show: true,
+    roles: [1, 4, 5]
   },
   {
     title: 'Equipos',
@@ -107,8 +107,8 @@ const linksList = [
     link: {
       name: 'team'
     },
-    show:true,
-    roles: [1, 2, 3, 4]
+    show: true,
+    roles: [1, 2, 4, 5]
   },
   {
     title: 'Inscripciones',
@@ -117,8 +117,8 @@ const linksList = [
     link: {
       name: 'Inscription'
     },
-    show:true,
-    roles: [1]
+    show: true,
+    roles: [1, 3]
   },
   {
     title: 'Periodos',
@@ -127,15 +127,15 @@ const linksList = [
     link: {
       name: 'period'
     },
-    show:true,
-    roles: [1]
+    show: true,
+    roles: [1, 3]
   },
   {
     title: 'Reportes',
     caption: '@QuasarFramework',
     icon: 'public',
     link: 'https://facebook.quasar.dev',
-    roles: [1,6 ],
+    roles: [0],
     show: true
   },
   {
@@ -143,7 +143,7 @@ const linksList = [
     caption: '@QuasarFramework',
     icon: 'shield',
     link: 'https://facebook.quasar.dev',
-    roles: [1,6 ],
+    roles: [1],
     show: true,
     link: {
       name: 'user'
@@ -151,8 +151,9 @@ const linksList = [
   },
 ];
 linksList.forEach(page => {
-  const element = page.roles.find(i=> i==storeUser.role)
-  if(element == undefined)
+  const element = page.roles.find(i => i == storeUser.role)
+  console.log(element)
+  if (element == undefined)
     page.show = false
 })
 
@@ -168,6 +169,7 @@ export default defineComponent({
     const router = useRouter()
 
     const signOnut = () => {
+      storeUser.reset()
       localStorage.removeItem('token')
       router.push('/login')
       store.$patch({

@@ -71,6 +71,9 @@ module.exports = configure(function (ctx) {
           .use(ESLintPlugin, [{ extensions: [ 'js', 'vue' ] }])
       },
     },
+    env: {
+
+    },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli/quasar-conf-js#Property%3A-devServer
     devServer: {
@@ -95,7 +98,8 @@ module.exports = configure(function (ctx) {
 
       // Quasar plugins
       plugins: [
-        'Notify'
+        'Notify',
+        'Loading'
       ]
     },
 

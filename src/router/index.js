@@ -42,7 +42,7 @@ export default route(function (/* { store, ssrContext } */) {
         console.log(roles)
         let validate = roles.find(r => r == userStore.role)
         if(validate == undefined){
-          next('/fdsfd')
+          next('/unauthorized')
         }
         return next()
       }

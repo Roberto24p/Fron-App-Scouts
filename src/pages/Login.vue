@@ -35,9 +35,9 @@ const loginForm = reactive({
     password: ''
 })
 const response = ref(null)
-const login =  () => {
-    if(store.access(loginForm))
-         router.push('/')
+const login =  async () => {
+    if(await store.access(loginForm))
+         router.push('/profile')
     else
         alert('Error')
 }

@@ -6,7 +6,8 @@
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
           <q-btn color="yellow" icon="mode_edit" class="q-mx-sm" @click="onEdit(props.row)"></q-btn>
-          <q-btn color="red" icon="delete" @click="onDelete(props.row)"></q-btn>
+          <q-btn color="red" icon="delete" @click="onDelete(props.row)" v-show="props.row.state=='A'"></q-btn>
+          <q-btn  color="green" icon="add" @click="activate(props.row)" v-show="props.row.state!='A'"></q-btn>
         </q-td>
       </template>
       <template v-slot:body-cell-img="props">
@@ -162,6 +163,16 @@ const addTeam = (unit) => {
   })
   unit.teams.push(newTeam)
 
+}
+
+const activate = (row) => {
+  ServicesGroup.activateGroup(row.id)
+    .then(response => {
+      console.log(response)
+      if(response.success == 1){
+        getGroups()
+      }
+    })
 }
 
 const deleteTeam = (teamId, teams) => {

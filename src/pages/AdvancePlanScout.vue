@@ -15,15 +15,13 @@
                             <q-item-label caption>
                                 {{ profile.email }}
                             </q-item-label>
-                            <q-item-label caption>
-                                Manada
-                            </q-item-label>
+                    
                             <!-- <q-item-label caption v-show="hasAdvancePlan">
                             {{ team_text }}
                             </q-item-label> -->
 
                         </q-item-section>
-                      
+
 
                     </q-item>
                 </q-card>
@@ -43,9 +41,11 @@
                             <q-badge color="white text-black">
                                 Progreso:
                             </q-badge>
-                            <q-slider v-model="model" :min="0" :max="10" color="green" track-size="10px"
-                                thumb-color="black" markers />
-
+                            <q-linear-progress size="25px" :value="percent"  :color="percent <= .5 ? 'secondary': percent > .5 && percent < .99 ? 'warning' : 'positive' " style="border-radius: 10px;">
+                                <div class="absolute-full flex flex-center">
+                                    <q-badge color="white" text-color="accent" :label="(percent * 100) + '%'" />
+                                </div>
+                            </q-linear-progress>
                         </q-item-section>
                     </q-item>
                 </q-card>
@@ -99,20 +99,22 @@
 <script setup>
 import { reactive, ref } from "vue"
 import ServicesAdvancePlan from 'src/services/ServicesAdvancePlan'
-import ServicesUnit from 'src/services/ServicesUnit'
+import ServicesScout from 'src/services/ServicesScout'
 import { useRoute } from "vue-router"
-
+//DATA
 const router = useRoute()
 
 const profile = reactive({
-    name: 'Roberto Plancencio',
-    email: 'roberto24r24r@Gmail.com'
+    name: '',
+    email: ''
 })
-alert(router.params.scoutId)
 const checks = reactive({})
 const advancePlan = ref([])
 const hasAdvancePlan = ref(true)
 const tab = ref('parche tierno')
+const percent = ref('')
+
+//METODOS
 const loadAdvancePlan = () => {
     ServicesAdvancePlan.getChecks(router.params.scoutId)
         .then(data => {
@@ -152,7 +154,7 @@ const checkTopic = (topicId) => {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            scout_id: 2,
+            scout_id: router.params.scoutId,
             topic_id: topicId,
         }),
         method: 'POST'
@@ -161,20 +163,36 @@ const checkTopic = (topicId) => {
             data.topics.forEach(topic => {
                 console.log(checks[topic.id])
                 checks[topic.topic_id].check = true
-                
             })
             loadAdvancePlan()
+            getPercentAdvancePlan()
         })
         .catch(e => console.log(e))
 }
+const getScoutData = () => {
+    ServicesScout.getScoutData(router.params.scoutId)
+        .then(response => {
+            profile.name = response.scout.person.name
+            profile.email = response.scout.person.user.email
+            console.log(response)
+        })
+}
 
+const getPercentAdvancePlan = ()=> {
+    ServicesAdvancePlan.getPercent(router.params.scoutId)
+        .then(response => {
+            percent.value = response
+        })
+}
+getPercentAdvancePlan()
+getScoutData()
 // const loadTeams = () => {
 //     ServicesUnit.getByScout(1)
 //         .then(response => {
 //             const arrayAux = []
 //             response.forEach(unit => {
 //                 console.log(unit)
-      
+
 //             })
 //             console.log(arrayAux)
 //             console.log(response)

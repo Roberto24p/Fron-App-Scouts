@@ -74,6 +74,8 @@ import ServicesTeam from 'src/services/ServicesTeam';
 import ServicesGroup from 'src/services/ServicesGroup';
 import ServicesUnit from 'src/services/ServicesUnit';
 import { ref, reactive, watch } from 'vue'
+import { useUsersStore } from '../store/user-store'
+const store = useUsersStore()
 const columns = [
     {
         name: 'name',
@@ -156,16 +158,24 @@ const onDelete = (row) => {
 const deleteUnit = () => {
     ServicesTeam.delete(team.id)
         .then(response => {
-        console.log(response)
-        getTeams()
-    })
+            console.log(response)
+            getTeams()
+        })
 }
 const getTeams = () => {
-    ServicesTeam.getTeams()
-        .then(response => {
-            teams.value = response.teams
-            console.log(response)
-        })
+    if (store.role == 1) {
+        ServicesTeam.getTeams()
+            .then(response => {
+                teams.value = response.teams
+                console.log(response)
+            })
+    }else if(store.role == 5){
+        ServicesTeam.teamsDirecting()
+            .then(response => {
+                teams.value = response.teams
+                console.log(response)
+            })
+    }
 }
 
 const updateTeam = () => {

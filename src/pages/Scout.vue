@@ -1,6 +1,6 @@
 <template>
     <div class="q-pa-md">
-        <q-btn label="Agregar" color="primary" class="q-ma-md" @click="dialog = true; bttForm = true"></q-btn>
+        <!-- <q-btn label="Agregar" color="primary" class="q-ma-md" @click="dialog = true; bttForm = true"></q-btn> -->
         <q-table title="Beneficiarios Scouts" :rows="rowScouts" :columns="columns" row-key="name">
             <template v-slot:body-cell-actions="props">
                 <q-td :props="props">

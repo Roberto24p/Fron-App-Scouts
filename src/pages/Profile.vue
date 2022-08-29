@@ -6,14 +6,14 @@
           <q-item>
             <q-item-section avatar>
               <q-avatar square>
-                <img src="https://cdn.quasar.dev/img/boy-avatar.png">
+                <img :src="store.avatar">
               </q-avatar>
             </q-item-section>
 
             <q-item-section>
-              <q-item-label><strong>{{ profile.name }}</strong> </q-item-label>
+              <q-item-label><strong>{{ store.name }}</strong> </q-item-label>
               <q-item-label caption>
-                {{ profile.email }}
+                {{ store.email }}
               </q-item-label>
             </q-item-section>
 
@@ -52,8 +52,10 @@
               <q-badge color="white text-black">
                 Progreso:
               </q-badge>
-
-              <q-slider v-model="value" :min="0" :max="100" :step="4" label label-always color="light-green" />
+              <q-linear-progress size="25px" :value="percent" color="primary">
+                <div class="absolute-full flex flex-center">
+                </div>
+              </q-linear-progress>
             </q-item-section>
           </q-item>
           <q-separator />
@@ -122,8 +124,11 @@
 <script setup>
 import ServicesProfile from 'src/services/ServicesProfile'
 import ServicesInscription from 'src/services/ServicesInscription'
-import { reactive } from "vue"
+import ServicesAdvancePlan from 'src/services/ServicesAdvancePlan'
+import { reactive, ref } from "vue"
 import { useRouter } from "vue-router"
+import { useUsersStore } from 'src/store/user-store'
+const store = useUsersStore()
 
 const router = useRouter()
 const profile = reactive({
@@ -133,6 +138,7 @@ const profile = reactive({
   grupoScout: '',
   statusInscription: ''
 })
+const percent = ref('')
 ServicesProfile.getProfile()
   .then(data => {
     profile.name = data.user.name
@@ -146,12 +152,19 @@ ServicesInscription.getStatusInscription()
   .then(data => {
     profile.grupoScout = data.data.name
     profile.statusInscription = data.data.state_inscription
-    console.log()
+    getPercentAdvancePlan(data.data.scout_id)
   })
+const getPercentAdvancePlan = (scout_id) => {
+  ServicesAdvancePlan.getPercent(scout_id)
+    .then(response => {
+      percent.value = response
+    })
+}
 
 const redirect = (ruta) => {
   router.push(ruta)
 }
+
 </script>
 
 <style >

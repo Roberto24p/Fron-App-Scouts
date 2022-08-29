@@ -68,6 +68,19 @@ const ServicesGroup = {
         return data
     },
 
+    activateGroup: async (groupId) => {
+        const token = localStorage.getItem('token')
+        const response = await fetch(`http://192.168.100.39:8000/api/group/activate/${groupId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+        }
+        )
+        const data = response.json()
+        return data
+    }
+
 }
 
 export default ServicesGroup

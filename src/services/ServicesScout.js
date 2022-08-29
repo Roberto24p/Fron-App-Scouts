@@ -94,6 +94,16 @@ const ServicesScout = {
         })
         const data = await response.json()
         return data
+    },
+    getScoutData: async scout_id => {
+        const token = localStorage.getItem('token')
+        const response = await fetch(`http://127.0.0.1:8000/api/scout/info/${scout_id}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        })
+        const data = await response.json()
+        return data
     }
 }
 

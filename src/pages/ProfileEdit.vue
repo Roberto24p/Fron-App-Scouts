@@ -3,20 +3,23 @@
         <div class="row q-col-gutter-md">
             <div class="col-12">
                 <q-card class="my-card ">
-                   <q-item>
+                    <q-item>
                         <q-item-section>
                             <p>
-                                Actualiza tus datos de inscripción
+                                Actualiza tus datos personales
                             </p>
                         </q-item-section>
                         <q-item-section>
-                            <q-btn color="primary" label="Perfil" flat @click="redirect('/profile')"/>
+                            <q-btn color="primary" label="Perfil" flat @click="redirect('/profile')" />
                         </q-item-section>
                     </q-item>
                 </q-card>
             </div>
             <div class="col-6">
                 <q-card class="my-card  q-py-sm">
+                    <q-item>
+                        <q-uploader @uploaded="fileComplete" :factory="upload" style="max-width: 300px" field-name="image" />
+                    </q-item>
                     <q-item>
 
                         <q-input label="Nombre" v-model="profile.name" outlined />
@@ -40,9 +43,11 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue';
+import { reactive, ref, watch } from 'vue';
 import ServicesProfile from 'src/services/ServicesProfile'
 import { useRouter } from "vue-router"
+import { useUsersStore } from '../store/user-store'
+const storeUser = useUsersStore()
 
 const router = useRouter()
 const profile = reactive({
@@ -57,6 +62,7 @@ const profile = reactive({
     nacionality: '',
     gender: '',
 })
+const avatar = ref('')
 
 ServicesProfile.getProfile()
     .then(data => {
@@ -73,14 +79,34 @@ ServicesProfile.getProfile()
     })
 
 const redirect = (ruta) => {
-  router.push(ruta)
+    router.push(ruta)
 }
+
+const upload = () => {
+    return new Promise((resolve, reject) => {
+        const token = localStorage.getItem('token')
+        resolve({
+            url: 'http://127.0.0.1:8000/api/fileAvatar',
+            method: 'POST',
+            headers: [
+                { name: 'Authorization', value: `Bearer ${token}` },
+            ]
+        })
+    })
+}
+
+const fileComplete = (info) => {
+    console.log(info.xhr.response)
+storeUser.avatar = info.xhr.response
+}
+
+
 </script>
 
 <style scoped>
-    p{
-        font-size: 20px;
-        margin-top: 10px;
-        float: center;
-    }
+p {
+    font-size: 20px;
+    margin-top: 10px;
+    float: center;
+}
 </style>
