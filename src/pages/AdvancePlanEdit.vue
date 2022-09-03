@@ -42,8 +42,9 @@ const advPlan = reactive({
 const itemDelete = []
 // const itemRecognition = ref([])
 console.log(router.params)
-ServicesAdvancePlan.advancePlanDetails(router.params.idAdvancePlan)
+ServicesAdvancePlan.advancePlanItems(router.params.idAdvancePlan)
   .then(data => {
+    alert(data[0].Description)
     console.log(data[0].Description)
     console.log(data[0].recognitions)
     advancePlan.description = data[0].Description

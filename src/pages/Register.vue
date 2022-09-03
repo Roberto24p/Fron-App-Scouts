@@ -27,15 +27,34 @@
                         </q-icon>
                     </template>
                 </q-input>
-                <q-btn label="Registrate" style="width: 100%;" type="submit" color="primary"  @click="register" />
+                <q-btn label="Registrate" style="width: 100%;" type="submit" color="primary" @click="register" />
             </div>
         </div>
     </div>
+    <q-dialog v-model="persistent" persistent transition-show="scale" transition-hide="scale">
+        <q-card class="bg-teal text-white" style="width: 300px">
+            <q-card-section>
+                <div class="text-h6">Ingresa el codigo de validación</div>
+            </q-card-section>
+
+            <q-card-section class="q-pt-none">
+                <q-input class="q-ma-xs" filled v-model="codeValidate" label="Codigo de validación"></q-input>
+            </q-card-section>
+
+            <q-card-actions align="right" class="bg-white text-teal">
+                <q-btn flat label="validar" @click="validateCode" />
+            </q-card-actions>
+        </q-card>
+    </q-dialog>
 </template>
 
 <script setup>
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 import ServicesAuth from 'src/services/ServicesAuth';
+import { useRouter } from "vue-router"
+import { useQuasar } from 'quasar'
+const $q = useQuasar()
+const route = useRouter()
 const scout = reactive({
     name: '',
     lastName: '',
@@ -48,6 +67,8 @@ const scout = reactive({
     nacionality: '',
     gender: '',
 })
+const codeValidate = ref('')
+const persistent = ref(false)
 const typeGender = [
     '1',
     '0'
@@ -63,7 +84,34 @@ const bloodType = [
     '+AB'
 ]
 
-const register = ()=>{
-    ServicesAuth.register(scout)
+const validateCode = () => {
+    if (codeValidate.value != '') {
+        ServicesAuth.validateCode(codeValidate.value)
+            .then(response => {
+                if (response.success == true) {
+                    ServicesAuth.register(scout)
+                        .then(res => {
+                            if (res.success)
+                                route.push('/login')
+                            else
+                                persistent.value = false
+                        })
+                }
+            })
+    }
+}
+const register = () => {
+    $q.loading.show()
+
+    ServicesAuth.validateEmail(scout.email)
+        .then(response => {
+            $q.loading.hide()
+
+            if (true) {
+                persistent.value = true
+            }
+            console.log(response)
+        })
+    // ServicesAuth.register(scout)
 }
 </script>

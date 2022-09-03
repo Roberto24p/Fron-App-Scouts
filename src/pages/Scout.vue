@@ -86,6 +86,7 @@
             </q-card-actions>
         </q-card>
     </q-dialog>
+    
 
 
 </template>
@@ -99,7 +100,8 @@ import { onBeforeMount, reactive, ref } from 'vue'
 import ServicesTeam from 'src/services/ServicesTeam';
 import { useRouter } from "vue-router"
 import ServicesAdvancePlan from 'src/services/ServicesAdvancePlan';
-
+import { useQuasar } from 'quasar'
+const $q = useQuasar()
 const router = useRouter()
 
 const columns = [
@@ -119,7 +121,7 @@ const columns = [
             return now - born
         }, sortable: true
     },
-    { name: 'group', align: 'left', label: 'Grupo', field: row => row.group_name, sortable: true },
+    { name: 'group', align: 'left', label: 'Grupo', field: row => row.group_name != ''? groupname.value: row.group_name, sortable: true },
     { name: 'unit', align: 'center', label: 'Unidad', field: row => row.type, sortable: true },
     { name: 'actions', label: 'Acciones', align: 'center' },
 ]
@@ -146,6 +148,7 @@ const dialog = ref(false)
 const teamsSelect = ref([])
 const unit = ref('')
 const team = ref('')
+const groupname = ref('')
 const scout = reactive({
     name: '',
     unitId: '',
@@ -190,11 +193,12 @@ const getScouts = async () => {
     rowScouts.value = scoutsFech.scouts
 }
 
-const getByGroups = async () => {
-    const response = await ServicesScout.getByGroup(1)
+const getByDirecting = async () => {
+    const response = await ServicesScout.getByDirecting()
+    console.log(response)
+    groupname.value = response.group
     rowScouts.value = response.scouts
 
-    console.log(response)
 }
 
 const onEdit = data => {
@@ -217,8 +221,10 @@ const onEdit = data => {
 }
 
 const getGroups = async () => {
+    $q.loading.show()
     const groupsFech = await ServicesGroup.getGroups()
     groupsSelect.value = groupsFech
+    $q.loading.hide()
 }
 const onChangeFocus = () => {
     ServicesTeam.teamsByUnit(unit.value)
@@ -261,9 +267,9 @@ watch(() => scout.groupId, onChangeGroup)
 watch(() => unit.value, onChangeFocus)
 onBeforeMount(() => {
     // getScouts()
-    getByGroups()
+    getByDirecting()
     getGroups()
-    ServicesUnit.getUnitByGroup(1)
+    ServicesUnit.getUnitsDirecting()
         .then(response => {
             unitsSelect.value = response
         })

@@ -1,7 +1,7 @@
 const ServicesGroup = {
     getGroups: async () => {
         const token = localStorage.getItem('token')
-        const response = await fetch('http://192.168.100.39:8000/api/group', {
+        const response = await fetch(`${process.env.BASE_API}/group`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -16,7 +16,7 @@ const ServicesGroup = {
     post: async (group) => {
         const token = localStorage.getItem('token')
 
-        const response = await fetch('http://192.168.100.39:8000/api/group', {
+        const response = await fetch(`${process.env.BASE_API}/group`, {
             method: 'POST',
             body: JSON.stringify(group),
             headers: {
@@ -29,7 +29,7 @@ const ServicesGroup = {
     },
     put: async (id, group) => {
         const token = localStorage.getItem('token')
-        const response = await fetch(`http://192.168.100.39:8000/api/group/${id}`, {
+        const response = await fetch(`${process.env.BASE_API}/group/${id}`, {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -43,7 +43,7 @@ const ServicesGroup = {
     delete: async (id) => {
         const token = localStorage.getItem('token')
 
-        const response = await fetch(`http://192.168.100.39:8000/api/group/${id}`, {
+        const response = await fetch(`${process.env.BASE_API}/group/${id}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -56,7 +56,7 @@ const ServicesGroup = {
     validate: async (codigo) => {
         const token = localStorage.getItem('token')
 
-        const response = await fetch(`http://192.168.100.39:8000/api/group/validate/${codigo}`, {
+        const response = await fetch(`${process.env.BASE_API}/group/validate/${codigo}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -70,7 +70,7 @@ const ServicesGroup = {
 
     activateGroup: async (groupId) => {
         const token = localStorage.getItem('token')
-        const response = await fetch(`http://192.168.100.39:8000/api/group/activate/${groupId}`, {
+        const response = await fetch(`${process.env.BASE_API}/group/activate/${groupId}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'

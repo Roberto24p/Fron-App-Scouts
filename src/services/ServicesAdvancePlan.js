@@ -1,17 +1,29 @@
 const ServicesAdvancePlan = {
     get: async () => {
-        const response = await fetch('http://192.168.100.39:8000/api/advancePlan')
+        const response = await fetch(`${process.env.BASE_API}/advancePlan`)
+        const data = await response.json()
+        return data
+    },
+    advancePlanItems: async (id) => {
+        const token = localStorage.getItem('token')
+
+        const response = await fetch(`${process.env.BASE_API}/advancePlan/scout/${id}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
         const data = await response.json()
         return data
     },
     advancePlanDetails: async (id) => {
-        const response = await fetch(`http://192.168.100.39:8000/api/advancePlan/scout/${id}`)
+        const response = await fetch(`${process.env.BASE_API}/advancePlan/scout/${id}`)
         const data = await response.json()
         return data
     },
     put: async (data) => {
         console.log(data)
-        const response = await fetch(`http://192.168.100.39:8000/api/advancePlanUpdate/`, {
+        const response = await fetch(`${process.env.BASE_API}/advancePlanUpdate/`, {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {
@@ -22,14 +34,14 @@ const ServicesAdvancePlan = {
         return respJson
     },
     getChecks: async scoutId => {
-        const response = await fetch(`http://192.168.100.39:8000/api/advancePlanChecks/${scoutId}`)
+        const response = await fetch(`${process.env.BASE_API}/advancePlanChecks/${scoutId}`)
         const data = await response.json()
         return data
     },
     getPercent: async scoutId => {
         const token = localStorage.getItem('token')
 
-        const response = await fetch(`http://192.168.100.39:8000/api/advanceplan/percent/${scoutId}`, {
+        const response = await fetch(`${process.env.BASE_API}/advanceplan/percent/${scoutId}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -37,7 +49,19 @@ const ServicesAdvancePlan = {
         })
         const data = await response.json()
         return data
-    }
+    },
+    getRecognitionsComplete: async (scoutId) => {
+        const token = localStorage.getItem('token')
+        const response = await fetch(`${process.env.BASE_API}/advanceplan/countrecognitions/${scoutId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
+        const data = await response.json()
+        return data
+    },
+
 }
 
 export default ServicesAdvancePlan

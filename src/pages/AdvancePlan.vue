@@ -17,6 +17,7 @@ import {  ref } from 'vue'
 const advancesPlan = ref([])
 ServicesAdvancePlan.get()
     .then(data => {
+        console.log(data)
         advancesPlan.value = data
     })
 

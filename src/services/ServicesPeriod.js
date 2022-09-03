@@ -1,7 +1,7 @@
 const ServicesPeriod = {
     getPeriod: async () => {
         const token = localStorage.getItem('token')
-        const response = await fetch('http://192.168.100.39:8000/api/nowperiod', {
+        const response = await fetch(`${process.env.BASE_API}/nowperiod`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'

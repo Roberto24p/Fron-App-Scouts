@@ -380,7 +380,7 @@ const factoryPermissions = (file) => {
     return new Promise((resolve, reject) => {
         const token = localStorage.getItem('token')
         resolve({
-            url: 'http://127.0.0.1:8000/api/file',
+            url: `${process.env.BASE_API}/file`,
             method: 'POST',
             headers: [
                 { name: 'Authorization', value: `Bearer ${token}` },
@@ -392,7 +392,7 @@ const factoryPay = (file) => {
     return new Promise((resolve, reject) => {
         const token = localStorage.getItem('token')
         resolve({
-            url: 'http://127.0.0.1:8000/api/filePay',
+            url: `${process.env.BASE_API}/filePay`,
             method: 'POST',
             headers: [
                 { name: 'Authorization', value: `Bearer ${token}` },

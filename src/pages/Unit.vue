@@ -5,9 +5,10 @@
             <template v-slot:body-cell-actions="props">
                 <q-td :props="props">
                     <q-btn color="yellow" icon="mode_edit" class="q-mx-sm" @click="onEdit(props.row)"></q-btn>
-                    <q-btn color="blue" icon="group" class="q-mx-sm"  @click="redirect(props.row.id)" ></q-btn>
-                    <q-btn color="red" icon="delete"  @click="onDelete(props.row)" v-show="props.row.state=='A'"></q-btn>
-                    <q-btn color="green" icon="add" @click="activate(props.row)" v-show="props.row.state != 'A'"></q-btn>
+                    <q-btn color="blue" icon="group" class="q-mx-sm" @click="redirect(props.row.id)"></q-btn>
+                    <q-btn color="red" icon="delete" @click="onDelete(props.row)" v-show="props.row.state == 'A'"></q-btn>
+                    <q-btn color="green" icon="add" @click="activate(props.row)" v-show="props.row.state != 'A'">
+                    </q-btn>
 
                 </q-td>
             </template>
@@ -37,26 +38,19 @@
             </q-card-actions>
         </q-card>
     </q-dialog>
-    <q-dialog v-model="dialog" persistent :maximized="true" transition-show="slide-up" transition-hide="slide-down">
-        <q-card class="bg-white text-primary">
+    <q-dialog v-model="dialog" transition-show="slide-up" transition-hide="slide-down">
+        <q-card style="width: 900px; max-width: 80vw;">
             <q-bar>
-                <q-toolbar-title>Asociación de Scouts del Guayas</q-toolbar-title>
+                <q-toolbar-title>Nuevo Unidad</q-toolbar-title>
                 <q-space />
                 <q-btn dense flat icon="close" v-close-popup>
                     <q-tooltip class="bg-white text-primary">Close</q-tooltip>
                 </q-btn>
             </q-bar>
 
-            <q-card-section>
-                <div class="text-h6">Nueva Unidad</div>
-            </q-card-section>
+
 
             <q-card-section class="col q-pt-none">
-                <div class="col-6 text-center">
-                    <q-img :src="unit.img_url == '' ? 'https://i.imgur.com/wKV0Jmy.png' : unit.img_url"
-                        spinner-color="white" style="height: 140px; max-width: 150px; border: yellow 5px solid;" />
-
-                </div>
                 <q-form class="q-gutter-md row q-pa-sm justify-center ">
                     <div class="col-md-5 col-sm-12 ">
                         <q-input class="col-12" filled v-model="unit.name" label="Nombre"></q-input>
@@ -68,6 +62,8 @@
                         <q-btn class="q-mt-sm" @click="addTeam" v-show="bttForm">Agregar Equipo</q-btn>
                     </div>
                     <div class="col-md-4 col-sm-12" v-show="bttForm">
+                        <q-img :src="unit.img_url == '' ? 'https://i.imgur.com/wKV0Jmy.png' : unit.img_url"
+                        spinner-color="white" style="height: 140px; max-width: 150px; border: yellow 5px solid;" />
                         <div v-for="team in unit.teams" v-bind:key="team.id" class="row">
                             <q-input class="col-12" filled v-model="team.name" label="Equipo">
                                 <template v-slot:append>
@@ -82,7 +78,7 @@
                 <q-btn flat label="Guardar" @click="postUnit" v-show="bttForm"></q-btn>
                 <q-btn flat label="Actualizar" @click="updateUnit" v-show="!bttForm"></q-btn>
             </q-card-actions>
-            {{ scout }}
+            {{  scout  }}
         </q-card>
     </q-dialog>
 
@@ -94,6 +90,8 @@ import ServicesUnit from 'src/services/ServicesUnit';
 import { onBeforeMount, reactive, ref } from 'vue';
 import { useRouter } from "vue-router"
 import { useUsersStore } from '../store/user-store'
+import { useQuasar } from 'quasar'
+const $q = useQuasar()
 const store = useUsersStore()
 const router = useRouter()
 
@@ -174,6 +172,7 @@ const getGroups = async () => {
 
 const getUnits = async () => {
     let unitsFetch;
+    $q.loading.show()
 
     if (store.role == 1) {
         unitsFetch = await ServicesUnit.getUnits()
@@ -181,7 +180,7 @@ const getUnits = async () => {
         unitsFetch = await ServicesUnit.getUnitsDirecting()
 
     }
-
+$q.loading.hide()
     rowUnits.value = unitsFetch
 }
 
@@ -245,7 +244,7 @@ const updateUnit = () => {
 const activate = (row) => {
     ServicesUnit.activate(row.id)
         .then(response => {
-            if(response.success == 1){
+            if (response.success == 1) {
                 getUnits()
             }
         })

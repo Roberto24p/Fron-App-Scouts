@@ -2,7 +2,7 @@ const ServicesScout = {
     getScouts: async () => {
         const token = localStorage.getItem('token')
 
-        const response = await fetch('http://127.0.0.1:8000/api/scout', {
+        const response = await fetch(`${process.env.BASE_API}/scout`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -27,7 +27,7 @@ const ServicesScout = {
             dni: scout.dni,
             user_id: ''
         }
-        const response = await fetch('http://127.0.0.1:8000/api/scout',
+        const response = await fetch(`${process.env.BASE_API}/scout`,
             {
                 method: 'POST',
                 body: new URLSearchParams(scoutJson),
@@ -54,7 +54,7 @@ const ServicesScout = {
             dni: scout.dni,
         }
 
-        const response = await fetch(`http://127.0.0.1:8000/api/scout/${id}`, {
+        const response = await fetch(`${process.env.BASE_API}/scout/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -67,7 +67,7 @@ const ServicesScout = {
     getByGroup: async groupId => {
         const token = localStorage.getItem('token')
 
-        const response = await fetch(`http://127.0.0.1:8000/api/scout/group/${groupId}`, {
+        const response = await fetch(`${process.env.BASE_API}/scout/group/${groupId}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
             },
@@ -77,7 +77,7 @@ const ServicesScout = {
     },
     validateHasTeam: async scout => {
         const token = localStorage.getItem('token')
-        const response = await fetch(`http://127.0.0.1:8000/api/scout/validate/${scout}`, {
+        const response = await fetch(`${process.env.BASE_API}/scout/validate/${scout}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
             },
@@ -87,7 +87,7 @@ const ServicesScout = {
     },
     getByUnit: async unit => {
         const token = localStorage.getItem('token')
-        const response = await fetch(`http://127.0.0.1:8000/api/scout/unit/${unit}`, {
+        const response = await fetch(`${process.env.BASE_API}/scout/unit/${unit}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
             },
@@ -97,7 +97,17 @@ const ServicesScout = {
     },
     getScoutData: async scout_id => {
         const token = localStorage.getItem('token')
-        const response = await fetch(`http://127.0.0.1:8000/api/scout/info/${scout_id}`, {
+        const response = await fetch(`${process.env.BASE_API}/scout/info/${scout_id}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        })
+        const data = await response.json()
+        return data
+    },
+    getByDirecting: async () => {
+        const token = localStorage.getItem('token')
+        const response = await fetch(`${process.env.BASE_API}/scoutsbydirectings`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
             },

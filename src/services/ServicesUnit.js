@@ -1,7 +1,7 @@
 const ServicesUnit = {
     getUnitByGroup: async (idGroup) => {
         const token = localStorage.getItem('token')
-        const response = await fetch(`http://192.168.100.39:8000/api/unit/group/${idGroup}`, {
+        const response = await fetch(`${process.env.BASE_API}/unit/group/${idGroup}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -13,7 +13,7 @@ const ServicesUnit = {
     getUnits: async () => {
         const token = localStorage.getItem('token')
 
-        const response = await fetch(`http://192.168.100.39:8000/api/unit`, {
+        const response = await fetch(`${process.env.BASE_API}/unit`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -24,7 +24,7 @@ const ServicesUnit = {
     },
     create: async unit => {
         const token = localStorage.getItem('token')
-        const response = await fetch('http://192.168.100.39:8000/api/unit',
+        const response = await fetch(`${process.env.BASE_API}/unit`,
             {
                 method: 'POST',
                 body: JSON.stringify(unit),
@@ -38,7 +38,7 @@ const ServicesUnit = {
     },
     update: async unit => {
         const token = localStorage.getItem('token')
-        const response = await fetch(`http://192.168.100.39:8000/api/unit/${unit.id}`, {
+        const response = await fetch(`${process.env.BASE_API}/unit/${unit.id}`, {
             method: 'PUT',
             body: JSON.stringify(unit),
             headers: {
@@ -51,7 +51,7 @@ const ServicesUnit = {
     },
     getByScout: async scout_id => {
         const token = localStorage.getItem('token')
-        const response = await fetch(`http://192.168.100.39:8000/api/unit/scout/${scout_id}`, {
+        const response = await fetch(`${process.env.BASE_API}/unit/scout/${scout_id}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -62,7 +62,7 @@ const ServicesUnit = {
     },
     delete: async unit_id => {
         const token = localStorage.getItem('token')
-        const response = await fetch(`http://192.168.100.39:8000/api/unit/${unit_id}`, {
+        const response = await fetch(`${process.env.BASE_API}/unit/${unit_id}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -74,7 +74,7 @@ const ServicesUnit = {
     },
     getUnitsDirecting: async () => {
         const token = localStorage.getItem('token')
-        const response = await fetch(`http://192.168.100.39:8000/api/unit/directing`, {
+        const response = await fetch(`${process.env.BASE_API}/unit/directing`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -85,7 +85,7 @@ const ServicesUnit = {
     },
     activate: async unitId => {
         const token = localStorage.getItem('token')
-        const response = await fetch(`http://192.168.100.39:8000/api/unit/activate/${unitId}`, {
+        const response = await fetch(`${process.env.BASE_API}/unit/activate/${unitId}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'

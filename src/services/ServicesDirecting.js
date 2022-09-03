@@ -1,7 +1,7 @@
 const ServicesDirecting = {
     getDirectings: async () => {
         const token = localStorage.getItem('token')
-        const response = await fetch('http://127.0.0.1:8000/api/directing', {
+        const response = await fetch(`${process.env.BASE_API}/directing`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -26,7 +26,7 @@ const ServicesDirecting = {
             dni: user.dni,
             user_id: ''
         }
-        const response = await fetch('http://127.0.0.1:8000/api/directing',
+        const response = await fetch(`${process.env.BASE_API}/directing`,
             {
                 method: 'POST',
                 body: new URLSearchParams(directingJson),
@@ -38,7 +38,7 @@ const ServicesDirecting = {
         return data
     },
     update: async (id, directing) => {
-        const response = await fetch(`http://127.0.0.1:8000/api/directing/${id}`, {
+        const response = await fetch(`${process.env.BASE_API}/directing/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -46,6 +46,18 @@ const ServicesDirecting = {
             body: new URLSearchParams(directing),
         })
         const data = response.json()
+        return data
+    },
+    getProfileDirecting: async () => {
+        const token = localStorage.getItem('token')
+
+        const response = await fetch(`${process.env.BASE_API}/directingprofile/`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+        })
+        const data = await  response.json()
         return data
     }
 }

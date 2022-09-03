@@ -119,10 +119,7 @@
 import { reactive, ref } from 'vue'
 import ServicesGroup from 'src/services/ServicesGroup'
 import { useQuasar } from 'quasar'
-import { useUsersStore } from '../store/user-store';
-const userStore = useUsersStore()
 const $q = useQuasar()
-
 const loading = ref(false)
 const bttForm = ref(false)
 const dialog = ref(false)
@@ -223,9 +220,11 @@ async function updateData() {
 }
 async function getGroups() {
   // loading.value = true
+  $q.loading.show()
   const dataGroups = await ServicesGroup.getGroups()
   console.log(dataGroups)
   groups.value = dataGroups
+  $q.loading.hide()
 
 }
 
@@ -307,7 +306,7 @@ const upload = () => {
   return new Promise((resolve, reject) => {
     const token = localStorage.getItem('token')
     resolve({
-      url: 'http://127.0.0.1:8000/api/fileGroup',
+      url: `${process.env.BASE_API}/fileGroup`,
       methid: 'POST',
       headers: [
         { name: 'Authorization', value: `Bearer ${token}` },

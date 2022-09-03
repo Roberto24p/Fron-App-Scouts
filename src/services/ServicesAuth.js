@@ -4,7 +4,7 @@ const ServicesAuth = {
             email: loginData.username,
             password: loginData.password
         }
-        const response = await fetch('http://192.168.100.39:8000/api/login', {
+        const response = await fetch(`${process.env.BASE_API}/login`, {
             method: 'POST',
             body: new URLSearchParams(loginJson),
         })
@@ -13,7 +13,7 @@ const ServicesAuth = {
     },
     signOut: async()=> {
         const token = localStorage.getItem('token')
-        const response = await fetch('http://127.0.0.1:8000/api/signOut', {
+        const response = await fetch(`${process.env.BASE_API}/signOut`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -22,13 +22,23 @@ const ServicesAuth = {
         })
     },
     register: async (userData) => {
-        const response = await fetch('http://192.168.100.39:8000/api/singIn',{
+        const response = await fetch(`${process.env.BASE_API}/singIn`,{
             method: 'POST',
             body:JSON.stringify(userData),
             headers: {
                 'Content-type': 'application/json; charset=UTF-8'
             }
         })
+        const data = await response.json()
+        return data
+    },
+    validateEmail: async(email) => {
+        const response = await fetch(`${process.env.BASE_API}/emailvalidate/${email}`)
+        const data = await response.json()
+        return data
+    },
+    validateCode: async(code) => {
+        const response = await fetch(`${process.env.BASE_API}/codevalidate/${code}`)
         const data = await response.json()
         return data
     }

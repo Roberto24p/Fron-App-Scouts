@@ -13,7 +13,7 @@ export const useUsersStore = defineStore('userStore', () => {
                 email: loginData.username,
                 password: loginData.password
             }
-            const response = await fetch('http://192.168.100.39:8000/api/login', {
+            const response = await fetch(`${process.env.BASE_API}/login`, {
                 method: 'POST',
                 body: JSON.stringify(loginJson),
                 headers: {
@@ -37,7 +37,7 @@ export const useUsersStore = defineStore('userStore', () => {
     const validateToken = async () => {
         try {
             const tokenAcceso = localStorage.getItem('token')
-            const response = await fetch('http://192.168.100.39:8000/api/validate', {
+            const response = await fetch(`${process.env.BASE_API}/validate`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${tokenAcceso}`,

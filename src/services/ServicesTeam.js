@@ -1,7 +1,7 @@
 const ServicesTeam = {
     getTeams: async () => {
         const token = localStorage.getItem('token')
-        const response = await fetch('http://127.0.0.1:8000/api/team', {
+        const response = await fetch(`${process.env.BASE_API}/team`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -12,7 +12,7 @@ const ServicesTeam = {
     },
     post: async (team) => {
         const token = localStorage.getItem('token')
-        const response = await fetch('http://127.0.0.1:8000/api/team', {
+        const response = await fetch(`${process.env.BASE_API}/team`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -26,7 +26,7 @@ const ServicesTeam = {
     },
     delete: async id => {
         const token = localStorage.getItem('token')
-        const response = await fetch(`http://127.0.0.1:8000/api/team/${id}`, {
+        const response = await fetch(`${process.env.BASE_API}/team/${id}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -38,7 +38,7 @@ const ServicesTeam = {
     },
     update: async team => {
         const token = localStorage.getItem('token')
-        const response = await fetch(`http://127.0.0.1:8000/api/team/${team.id}`, {
+        const response = await fetch(`${process.env.BASE_API}/team/${team.id}`, {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -53,7 +53,7 @@ const ServicesTeam = {
     },
     teamsByUnit: async unit => {
         const token = localStorage.getItem('token')
-        const response = await fetch(`http://127.0.0.1:8000/api/team/unit/${unit}`, {
+        const response = await fetch(`${process.env.BASE_API}/team/unit/${unit}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -65,7 +65,7 @@ const ServicesTeam = {
     },
     addTeamScout: async teamScout => {
         const token = localStorage.getItem('token')
-        const response = await fetch(`http://127.0.0.1:8000/api/team/scout`, {
+        const response = await fetch(`${process.env.BASE_API}/team/scout`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -78,7 +78,7 @@ const ServicesTeam = {
     },
     teamsDirecting: async () => {
         const token = localStorage.getItem('token')
-        const response = await fetch('http://127.0.0.1:8000/api/teams/directing', {
+        const response = await fetch(`${process.env.BASE_API}/teams/directing`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'

@@ -15,11 +15,11 @@ const routes = [
       },
       {
         path: '/scout', component: () => import('pages/Scout.vue'), name: 'scout',
-        meta: { auth: true,  roles: [1] }
+        meta: { auth: true,  roles: [1, 4, 5] }
       },
       {
         path: '/unit', component: () => import('pages/Unit.vue'), name: 'unit',
-        meta: { auth: true, roles: [1, 5] }
+        meta: { auth: true, roles: [1, 4, 5] }
       },
       {
         path: '/period', component: () => import('pages/Period.vue'), name: 'period',
@@ -39,11 +39,11 @@ const routes = [
       },
       {
         path: '/profile', component: () => import('pages/Profile.vue'), name: 'Profile',
-        meta: { auth: true, roles: [1, 3,5, 6] }
+        meta: { auth: true, roles: [1, 3, 4, 5, 6] }
       },
       {
         path: '/profileEdit', component: () => import('pages/ProfileEdit.vue'), name: 'ProfileEdit',
-        meta: { auth: true, roles: [1, 5, 6] }
+        meta: { auth: true, roles: [1, 4, 5, 6] }
       },
       {
         path: '/inscriptionScout', component: () => import('pages/InscriptionScout.vue'), name: 'InscriptionScout',
@@ -51,7 +51,7 @@ const routes = [
       },
       {
         path: '/advancePlanScout/:scoutId', component: () => import('pages/AdvancePlanScout.vue'), name: 'AdvancePlanScout',
-        meta: { auth: true,  roles: [1] }
+        meta: { auth: true,  roles: [1,5] }
       },
       {
         path: '/inscription', component: () => import('pages/Inscription.vue'), name: 'Inscription',
@@ -59,7 +59,7 @@ const routes = [
       },
       {
         path: '/team', component: () => import('pages/Teams.vue'), name: 'team',
-        meta: { auth: true, roles: [1,2, 5] }
+        meta: { auth: true, roles: [1,2,4,5] }
       },
       {
         path: '/teamScouts', component: () => import('pages/TeamScout.vue'), name: 'teamScouts',

@@ -24,9 +24,8 @@
 
 <script setup>
 import { reactive, ref } from "vue"
-import ServicesAuth from '../services/ServicesAuth'
 import { useRouter } from "vue-router"
-import { useUsersStore } from '../store/user-store';
+import { useUsersStore } from '../store/user-store'
 
 const store = useUsersStore()
 const router = useRouter()

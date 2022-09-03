@@ -4,7 +4,7 @@
     <q-header elevated>
       <q-toolbar>
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
-
+        <img class="q-ml-sm" style="height:50px; width: 50px" src="https://scontent.fgye1-1.fna.fbcdn.net/v/t1.6435-9/104264215_1375296942662790_2626700348287070741_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=09cbfe&_nc_eui2=AeG-fXYIpoC6dOwecteGSKH9890omTthj3Pz3SiZO2GPcweK1PzgZHKWpIFSNgq3m_O3faSVjaX1RH3J9KNcUTRq&_nc_ohc=_r-JnUkdgMIAX8J6Gtt&_nc_ht=scontent.fgye1-1.fna&oh=00_AT8IS8g_sfwnWFEqCFKbBM_4fs-I7BpBnXLaAfX8MicUWA&oe=6335AD05"/>
         <q-toolbar-title>
           Asociación de Scouts del Guayas
         </q-toolbar-title>
@@ -26,7 +26,7 @@
       <q-img class="absolute-top" src="https://cdn.quasar.dev/img/material.png" style="height: 150px">
         <div class="absolute-bottom bg-transparent">
           <q-avatar size="56px" class="q-mb-sm">
-            <img :src="storeUser.avatar">
+            <img :src="storeUser.avatar == '' ? 'https://png.pngtree.com/png-vector/20190116/ourlarge/pngtree-vector-avatar-icon-png-image_322275.jpg' :storeUser.avatar ">
           </q-avatar>
           <div class="text-weight-bold">{{ storeUser.name }}</div>
           <div>{{ storeUser.email }}</div>
@@ -88,7 +88,7 @@ const linksList = [
       name: 'scout'
     },
     show: true,
-    roles: [1]
+    roles: [1, 5]
   },
   {
     title: 'Unidades',

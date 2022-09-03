@@ -33,14 +33,13 @@ const advancePlan = reactive({
 
 const recognitionCards = ref([])
 console.log(router.params)
-ServicesAdvancePlan.advancePlanDetails(router.params.idAdvancePlan)
+ServicesAdvancePlan.advancePlanItems(router.params.idAdvancePlan)
     .then(data => {
-        console.log(data[0].Description)
-        console.log(data[0].tittle)
+        console.log(data)
+    
         advancePlan.description = data[0].Description
         advancePlan.tittle = data[0].tittle
         recognitionCards.value = data[0].recognitions
-        console.log(data[0].recognitions)
     })
 
 </script>

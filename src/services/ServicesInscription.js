@@ -7,7 +7,7 @@ const ServicesInscription = {
             date_start: inscription.dateStart,
             date_end: inscription.dateEnd
         }
-        const response = await fetch('http://127.0.0.1:8000/api/period',
+        const response = await fetch(`${process.env.BASE_API}/period`,
             {
                 method: 'POST',
                 body: new URLSearchParams(jsonInscription),
@@ -22,7 +22,7 @@ const ServicesInscription = {
     get: async () => {
 
         const token = localStorage.getItem('token')
-        const response = await fetch('http://127.0.0.1:8000/api/period', {
+        const response = await fetch(`${process.env.BASE_API}/period`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -40,7 +40,7 @@ const ServicesInscription = {
             date_start: inscription.dateStart,
             date_end: inscription.dateEnd
         }
-        const response = await fetch(`http://127.0.0.1:8000/api/period/${id}`,
+        const response = await fetch(`${process.env.BASE_API}/period/${id}`,
             {
                 method: 'PUT',
                 body: new URLSearchParams(jsonInscription),
@@ -56,7 +56,7 @@ const ServicesInscription = {
         
         const token = localStorage.getItem('token')
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/inscription/register', {
+            const response = await fetch(`${process.env.BASE_API}/inscription/register`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -81,7 +81,7 @@ const ServicesInscription = {
 
     getStatusInscription: async () => {
         const token = localStorage.getItem('token')
-        const response = await fetch('http://127.0.0.1:8000/api/inscription/group', {
+        const response = await fetch(`${process.env.BASE_API}/inscription/group`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -93,7 +93,7 @@ const ServicesInscription = {
 
     getAllInscriptions: async () => {
         const token = localStorage.getItem('token')
-        const response = await fetch('http://127.0.0.1:8000/api/inscription', {
+        const response = await fetch(`${process.env.BASE_API}/inscription`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -105,7 +105,7 @@ const ServicesInscription = {
 
     putInscription: async (inscription) => {
         const token = localStorage.getItem('token')
-        const response = await fetch('http://127.0.0.1:8000/api/updateInscription', {
+        const response = await fetch(`${process.env.BASE_API}/updateInscription`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'

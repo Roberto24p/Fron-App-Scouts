@@ -2,7 +2,7 @@ const ServicesProfile = {
     getProfile: async () => {
         const token = localStorage.getItem('token')
 
-        const response = await fetch('http://127.0.0.1:8000/api/profile', {
+        const response = await fetch(`${process.env.BASE_API}/profile`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -13,7 +13,7 @@ const ServicesProfile = {
     },
     getInscriptionInfo: async () => {
         const token = localStorage.getItem('token')
-        const response = await fetch('http://127.0.0.1:8000/api/inscription/scout', {
+        const response = await fetch(`${process.env.BASE_API}/inscription/scout`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'

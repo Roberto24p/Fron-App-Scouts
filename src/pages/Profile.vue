@@ -1,12 +1,13 @@
 <template >
-  <div class="q-pa-md ">
+  <div class="q-pa-md " v-if="store.role == 6">
     <div class="row q-col-gutter-md">
-      <div class="col-6">
+      <div class="col-md-6 col-xs-12">
         <q-card class="my-card  q-py-sm">
           <q-item>
             <q-item-section avatar>
               <q-avatar square>
-                <img :src="store.avatar">
+                <img
+                  :src="store.avatar == '' ? 'https://png.pngtree.com/png-vector/20190116/ourlarge/pngtree-vector-avatar-icon-png-image_322275.jpg' : store.avatar">
               </q-avatar>
             </q-item-section>
 
@@ -32,7 +33,7 @@
         </q-card>
 
       </div>
-      <div class="col-6">
+      <div class="col-md-6 col-xs-12">
         <q-card class="my-card ">
           <q-item>
             <q-item-section>
@@ -44,16 +45,17 @@
           <q-separator />
           <q-item>
             <q-item-section avatar>
-              <q-btn round color="blue-2" text-color="blue-8" icon="fas fa-bolt" />
-
+              <q-btn round color="blue-2" text-color="blue-8" icon="cached" />
             </q-item-section>
-
             <q-item-section>
               <q-badge color="white text-black">
                 Progreso:
               </q-badge>
-              <q-linear-progress size="25px" :value="percent" color="primary">
+              <q-linear-progress size="25px" :value="percent"
+                :color="percent <= .5 ? 'secondary' : percent > .5 && percent < .99 ? 'warning' : 'positive'"
+                style="border-radius: 10px;">
                 <div class="absolute-full flex flex-center">
+                  <q-badge color="white" text-color="accent" :label="(percent * 100) + '%'" />
                 </div>
               </q-linear-progress>
             </q-item-section>
@@ -70,7 +72,7 @@
 
     </div>
     <div class="row q-col-gutter-md">
-      <div class="col-6">
+      <div class="col-md-6 col-xs-12">
         <q-toolbar>
           <q-toolbar-title class="text-overline">Información</q-toolbar-title>
           <q-btn flat text-color="light-blue-8" label="Show All" />
@@ -79,7 +81,7 @@
         <q-card class="my-card" style="padding: 33px 0px 33px 0px;">
           <q-item>
             <q-item-section avatar>
-              <q-btn round color="blue-2" text-color="blue-8" icon="fas fa-bolt" />
+              <q-btn round color="blue-2" text-color="blue-8" :icon="!profile.grupoScout == '' ? 'done' : 'close'" />
             </q-item-section>
 
             <q-item-section>
@@ -97,23 +99,92 @@
           </q-item>
         </q-card>
       </div>
-      <div class="col-6">
+      <div class="col-md-6 col-xs-12">
         <q-toolbar>
           <q-toolbar-title class="text-overline">Reconocimientos Obtenidos</q-toolbar-title>
           <q-btn flat text-color="light-blue-8" label="Show All"></q-btn>
         </q-toolbar>
-        <q-card class="my-card q-py-sm">
+        <q-card v-for="recog in recognitions " v-bind:key="recog.id" class="my-card q-my-sm">
           <q-item>
+
             <q-item-section>
-              <q-item-label><strong>Aspirante</strong></q-item-label>
+              <q-item v-if="recogGets[recog.id]" bg-success>
+                <q-icon style="font-size: 2em" name="check" color="green" class="q-ml-md"></q-icon>
+              </q-item>
+              <q-item v-else>
+                <q-icon style="font-size: 2em" name="close" color="red" class="q-ml-md"></q-icon>
+              </q-item>
+            </q-item-section>
+
+            <q-item-section>
+              <q-item-label><strong>{{ recog.name }}</strong></q-item-label>
             </q-item-section>
           </q-item>
         </q-card>
-        <q-card class="my-card q-py-sm q-mt-sm">
+
+      </div>
+    </div>
+  </div>
+  <div class="q-pa-md " v-else>
+    <div class="row q-col-gutter-md">
+      <div class="col-md-12 col-xs-12">
+        <q-card class="my-card  q-py-sm">
+          <q-item>
+            <q-item-section avatar>
+              <q-avatar square>
+                <img
+                  :src="store.avatar == '' ? 'https://png.pngtree.com/png-vector/20190116/ourlarge/pngtree-vector-avatar-icon-png-image_322275.jpg' : store.avatar">
+              </q-avatar>
+            </q-item-section>
+
+            <q-item-section>
+              <q-item-label><strong>{{ store.name }}</strong> </q-item-label>
+              <q-item-label caption>
+                {{ store.email }}
+              </q-item-label>
+            </q-item-section>
+
+          </q-item>
+
+          <q-separator />
+          <q-separator />
           <q-item>
             <q-item-section>
-              <q-item-label><strong>Primera Clase</strong></q-item-label>
+              <q-btn color="grey" label="Editar Información" @click="redirect('profileEdit')" />
             </q-item-section>
+          </q-item>
+        </q-card>
+
+      </div>
+    </div>
+    <div class="row q-col-gutter-md">
+      <div class="col-md-6 col-xs-12">
+        <q-toolbar>
+          <q-toolbar-title class="text-overline">Información</q-toolbar-title>
+          <q-btn flat text-color="light-blue-8" label="Show All" />
+        </q-toolbar>
+
+        <q-card class="my-card" style="padding: 33px 0px 33px 0px;">
+          <q-item>
+            <q-item-section avatar>
+              <q-avatar square>
+                <img
+                  :src="profile.imgGroup == '' ? 'https://png.pngtree.com/png-vector/20190116/ourlarge/pngtree-vector-avatar-icon-png-image_322275.jpg' : profile.imgGroup">
+              </q-avatar>
+            </q-item-section>
+
+            <q-item-section>
+              <q-item-label><strong>{{ profile.grupoScout }}</strong> </q-item-label>
+
+            </q-item-section>
+            <q-item-section>
+          
+              <q-item-label class="text-green"><strong style="text-transform: capitalize;"> Unidad: {{
+                  profile.unitScout
+              }}</strong> </q-item-label>
+
+            </q-item-section>
+
           </q-item>
         </q-card>
       </div>
@@ -128,37 +199,85 @@ import ServicesAdvancePlan from 'src/services/ServicesAdvancePlan'
 import { reactive, ref } from "vue"
 import { useRouter } from "vue-router"
 import { useUsersStore } from 'src/store/user-store'
+import { useQuasar } from 'quasar'
+import ServicesDirecting from 'src/services/ServicesDirecting'
+const $q = useQuasar()
 const store = useUsersStore()
-
+$q.loading.show()
 const router = useRouter()
 const profile = reactive({
   name: '',
   email: '',
   type: '',
   grupoScout: '',
-  statusInscription: ''
+  unitScout: '',
+  imgGroup: ''
 })
 const percent = ref('')
-ServicesProfile.getProfile()
-  .then(data => {
-    profile.name = data.user.name
-    profile.email = data.user.email
-    if (data.scout.type == '')
-      profile.type = 'NO INSCRITO'
-    console.log(data)
-  })
+const recognitions = ref([])
+const recogGets = reactive({})
+if (store.role == 6) {
+  ServicesProfile.getProfile()
+    .then(data => {
+      $q.loading.hide()
 
-ServicesInscription.getStatusInscription()
-  .then(data => {
-    profile.grupoScout = data.data.name
-    profile.statusInscription = data.data.state_inscription
-    getPercentAdvancePlan(data.data.scout_id)
-  })
-const getPercentAdvancePlan = (scout_id) => {
-  ServicesAdvancePlan.getPercent(scout_id)
-    .then(response => {
-      percent.value = response
+      console.log(data)
+      profile.name = data.user.name
+      profile.email = data.user.email
+      if (data.scout.type == '')
+        profile.type = 'NO INSCRITO'
+      console.log(data)
     })
+
+  ServicesInscription.getStatusInscription()
+    .then(data => {
+      if (store.role == 6) {
+        profile.grupoScout = data.data.name
+        profile.statusInscription = data.data.state_inscription
+        geRecognitionsComplete(data.data.scout_id)
+
+        getPercentAdvancePlan(data.data.scout_id)
+        ServicesAdvancePlan.advancePlanDetails(data.data.scout_id)
+          .then(response => {
+            recognitions.value = response[0].recognitions
+
+            console.log(recognitions.value)
+          })
+      } else {
+        $q.loading.hide()
+
+      }
+
+    })
+
+  const geRecognitionsComplete = (scout_id) => {
+    ServicesAdvancePlan.getRecognitionsComplete(scout_id)
+      .then(response => {
+        response.recog.forEach(item => {
+          recogGets[item.id] = true
+        })
+        console.log(response)
+        $q.loading.hide()
+
+      })
+  }
+  const getPercentAdvancePlan = (scout_id) => {
+    ServicesAdvancePlan.getPercent(scout_id)
+      .then(response => {
+        percent.value = response
+      })
+  }
+
+} else {
+  ServicesDirecting.getProfileDirecting()
+    .then(response => {
+      profile.grupoScout = response.profile.group.name
+      profile.imgGroup = response.profile.group.image
+      profile.unitScout = response.profile.name
+      console.log(response)
+    })
+  $q.loading.hide()
+
 }
 
 const redirect = (ruta) => {
