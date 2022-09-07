@@ -30,16 +30,13 @@ export default route(function (/* { store, ssrContext } */) {
   })
 
   Router.beforeEach(async (to, from, next) => {
-    console.log(to)
     const userStore = useUsersStore()
     const requireAuth = to.meta.auth
     if(requireAuth){
       //validar
       await userStore.validateToken()
-      console.log(userStore.token)
       if(userStore.token){
         const roles = to.meta.roles
-        console.log(roles)
         let validate = roles.find(r => r == userStore.role)
         if(validate == undefined){
           next('/unauthorized')
@@ -50,18 +47,7 @@ export default route(function (/* { store, ssrContext } */) {
       return next('/login')
     }
     next()
-    console.log(to.path != '/login')
-    if (token == null && to.path != '/login') {
-      console.log('Ir a login')
-      if (to.path == '/register') {
-        console.log('ir a register')
-        next({ path: '/register', name: 'register' })
-
-      } next({ path: '/login', name: 'login' })
-    } else {
-      next()
-      console.log('Hola mundo2')
-    }
+   
 
   })
 

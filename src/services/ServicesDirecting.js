@@ -59,6 +59,30 @@ const ServicesDirecting = {
         })
         const data = await  response.json()
         return data
+    },
+    deleteDirecting: async (directingId) => {
+        const token = localStorage.getItem('token')
+        const response = await fetch(`${process.env.BASE_API}/directing/${directingId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            method: 'DELETE'
+        })
+        const data = await response.json()
+        return data
+    },
+    activateDirecting: async (directingId) => {
+        const token = localStorage.getItem('token')
+        const response = await fetch(`${process.env.BASE_API}/directing/activate/${directingId}`,{
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            method: 'GET'
+        })
+        const data = await response.json()
+        return data
     }
 }
 

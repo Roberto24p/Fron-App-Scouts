@@ -1,11 +1,12 @@
 <template>
   <div class="q-pa-md">
-    <q-btn label="Agregar" color="primary" class="q-ma-md" @click="dialog = true; bttForm = true" />
+    <!-- <q-btn label="Agregar" color="primary" class="q-ma-md" @click="dialog = true; bttForm = true" /> -->
     <q-table title="Dirigentes" :rows="directings" :columns="columns" row-key="name" :loading="loading">
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
-          <q-btn color="yellow" icon="mode_edit" class="q-mx-sm" @click="onEdit(props.row)"></q-btn>
-          <q-btn color="red" icon="delete" @click="onDelete(props.row)"></q-btn>
+          <!-- <q-btn color="yellow" icon="mode_edit" class="q-mx-sm" @click="onEdit(props.row)"></q-btn> -->
+          <q-btn color="red" icon="delete" v-show="props.row.state == 'A'" @click="onDelete(props.row.id)"></q-btn>
+          <q-btn color="yellow" icon="add"  v-show="props.row.state == 'D' && (store.role == 1 || store.role == 2)" @click="activate(props.row.id)"></q-btn>
         </q-td>
       </template>
       <template v-slot:loading>
@@ -13,6 +14,18 @@
       </template>
     </q-table>
   </div>
+  <q-dialog v-model="confirm">
+    <q-card>
+      <q-card-section class="row items-center">
+        <span class="q-ml-sm">Deseas eliminar el dirigente seleccionado?</span>
+      </q-card-section>
+
+      <q-card-actions align="right">
+        <q-btn flat label="Cancelar" color="primary" v-close-popup />
+        <q-btn flat label="Eliminar" color="primary" v-close-popup @click="deleteDirecting" />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
   <q-dialog v-model="dialog" persistent :maximized="true" transition-show="slide-up" transition-hide="slide-down">
     <q-card class="bg-white text-primary">
       <q-bar>
@@ -51,8 +64,8 @@
               </q-icon>
             </template>
           </q-input>
-          <q-select class="col-4" emit-value map-options v-model="directing.groupId" :options="groups" option-value="id" option-label="name"
-            @input="onChangeFocus" label="Elige Grupo" />
+          <q-select class="col-4" emit-value map-options v-model="directing.groupId" :options="groups" option-value="id"
+            option-label="name" @input="onChangeFocus" label="Elige Grupo" />
           <q-select class="col-4" emit-value map-options v-model="directing.unitId" :options="units" option-value="id"
             option-label="name" label="Elige Unidad" />
         </q-form>
@@ -71,6 +84,9 @@ import { reactive, ref, onBeforeMount, watch } from "vue"
 import ServicesDirecting from '../services/ServicesDirecting'
 import ServicesGroup from '../services/ServicesGroup'
 import ServicesUnit from '../services/ServicesUnit'
+import { useUsersStore } from '../store/user-store'
+const store = useUsersStore()
+
 const columns = [
   {
     name: 'name',
@@ -82,9 +98,19 @@ const columns = [
     sortable: true
   },
   { name: 'last_Name', align: 'left', label: 'Apellido', field: 'last_name', sortable: true },
-  { name: 'age', align: 'left', label: 'Edad', field: 'age', sortable: true },
+  {
+    name: 'age', align: 'left', label: 'Edad', field: row => {
+            const born = new Date(row.born_date).getFullYear();
+            const now = new Date().getFullYear()
+            return now - born
+    }, sortable: true
+    },
+    {
+      name: 'group_name', align: 'left', label: 'Grupo Scout', field: 'group_name', sortable: true 
+    },
   { name: 'actions', label: 'Acctiones' }
 ]
+const confirm = ref(false)
 const bloodType = [
   '+O',
   '-O',
@@ -128,6 +154,17 @@ async function onChangeFocus() {
 
 }
 
+
+const onDelete = async (directingId) => {
+  directing.id = directingId
+  confirm.value = true
+}
+
+const deleteDirecting = async () =>{
+  const response = await ServicesDirecting.deleteDirecting(directing.id)
+  if(response.success)
+    getDirectings()
+}
 const onEdit = async data => {
   console.log(data)
   dialog.value = true
@@ -146,6 +183,12 @@ const onEdit = async data => {
   directing.id = data.id
   bttForm.value = false
 
+}
+
+const activate = async (directingId) => {
+  const response = await ServicesDirecting.activateDirecting(directingId)
+  if(response.success)
+    getDirectings()
 }
 
 async function sendData() {
@@ -180,6 +223,7 @@ const getGroups = async () => {
 
 async function getDirectings() {
   const dataDirectings = await ServicesDirecting.getDirectings()
+  console.log(dataDirectings)
   directings.value = dataDirectings
 }
 

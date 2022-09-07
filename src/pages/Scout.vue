@@ -4,9 +4,13 @@
         <q-table title="Beneficiarios Scouts" :rows="rowScouts" :columns="columns" row-key="name">
             <template v-slot:body-cell-actions="props">
                 <q-td :props="props">
-                    <q-btn color="yellow" icon="mode_edit" class="q-mx-sm" @click="onEdit(props.row)"></q-btn>
-                    <q-btn color="red" icon="delete" class="q-mx-sm" @click="onDelete(props.row)"></q-btn>
-                    <q-btn color="blue" icon="settings" @click="showModalScoutTeam(props.row)"></q-btn>
+                    <q-btn v-if="store.role != 5" color="yellow" icon="mode_edit" class="q-mx-sm"
+                        @click="onEdit(props.row)"></q-btn>
+                    <q-btn v-if="store.role != 5" color="red" icon="delete" class="q-mx-sm"
+                        @click="onDelete(props.row)"></q-btn>
+
+                    <q-btn v-if="store.role != 5" color="blue" icon="settings" @click="showModalScoutTeam(props.row)">
+                    </q-btn>
                     <q-btn color="green" icon="task" @click="redirect(props.row)"></q-btn>
                 </q-td>
             </template>
@@ -86,7 +90,7 @@
             </q-card-actions>
         </q-card>
     </q-dialog>
-    
+
 
 
 </template>
@@ -100,7 +104,10 @@ import { onBeforeMount, reactive, ref } from 'vue'
 import ServicesTeam from 'src/services/ServicesTeam';
 import { useRouter } from "vue-router"
 import ServicesAdvancePlan from 'src/services/ServicesAdvancePlan';
+import { useUsersStore } from '../store/user-store'
 import { useQuasar } from 'quasar'
+const store = useUsersStore()
+
 const $q = useQuasar()
 const router = useRouter()
 
@@ -121,7 +128,7 @@ const columns = [
             return now - born
         }, sortable: true
     },
-    { name: 'group', align: 'left', label: 'Grupo', field: row => row.group_name != ''? groupname.value: row.group_name, sortable: true },
+    { name: 'group', align: 'left', label: 'Grupo', field: row => row.group_name != '' ? groupname.value : row.group_name, sortable: true },
     { name: 'unit', align: 'center', label: 'Unidad', field: row => row.type, sortable: true },
     { name: 'actions', label: 'Acciones', align: 'center' },
 ]
@@ -167,7 +174,8 @@ const scout = reactive({
 })
 
 const onChangeGroup = async (groupId) => {
-    const unitsFetch = await ServicesUnit.getUnitByGroup(1)
+
+    const unitsFetch = await ServicesUnit.getUnitByGroup(groupId)
     unitsSelect.value = unitsFetch
 }
 
@@ -194,10 +202,16 @@ const getScouts = async () => {
 }
 
 const getByDirecting = async () => {
-    const response = await ServicesScout.getByDirecting()
-    console.log(response)
-    groupname.value = response.group
-    rowScouts.value = response.scouts
+    if (store.role == 5) {
+        const response = await ServicesScout.getByDirecting()
+        groupname.value = response.group
+        rowScouts.value = response.scouts
+    }else{
+        const response = await ServicesScout.getByGroup()
+        rowScouts.value = response.scouts
+        groupname.value = response.group
+
+    }
 
 }
 
@@ -240,6 +254,17 @@ const showModalScoutTeam = (row) => {
     scout.lastName = row.last_name
     scout.id = row.id
 
+    ServicesScout.getTeamUnit(row.id)
+        .then(response => {
+        if(response.success == 1){
+            if(response.unit != null){
+                unit.value = response.unit.teams[0].unit_id
+                team.value = response.unit.teams[0].id
+            }
+        }
+    })
+    
+
 }
 
 const saveScoutTeam = () => {
@@ -257,7 +282,7 @@ const redirect = (row) => {
     alert(row.id)
     ServicesScout.validateHasTeam(row.id)
         .then(response => {
-            if(response.scoutTeam)
+            if (response.scoutTeam)
                 router.push({ name: 'AdvancePlanScout', params: { scoutId: row.id } })
             else
                 alert('El usuario no ha sido asignado a un team')

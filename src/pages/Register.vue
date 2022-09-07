@@ -7,27 +7,35 @@
         <div class="col-lg-5 col-md-5 col-xs-12 q-pa-md">
             <div class="text-h5 text-center ">Registrate</div>
             <div class="q-pa-sm col-sm-12">
-                <q-input class="q-ma-xs" filled v-model="scout.name" label="Nombre"></q-input>
-                <q-input class="q-ma-xs" filled v-model="scout.lastName" label="Apellido"></q-input>
-                <q-input class="q-ma-xs" filled v-model="scout.dni" label="Cedula"></q-input>
-                <q-input class="q-ma-xs" filled v-model="scout.phone" label="Telefono"></q-input>
-                <q-input class="q-ma-xs" filled v-model="scout.email" label="Email"></q-input>
-                <q-select class="q-ma-xs" filled :options="bloodType" v-model="scout.typeBlood" label="Tipo de Sangre">
-                </q-select>
-                <q-select class="q-ma-xs" emit-value map-options v-model="scout.gender" :options="typeGender"
-                    label="Genero">
-                </q-select>
-                <q-input class="q-ma-xs" filled label="Fecha de Nacimiento" v-model="scout.bornDate" mask="date"
-                    :rules="['date']">
-                    <template v-slot:append>
-                        <q-icon name="event" class="cursor-pointer">
-                            <q-popup-proxy>
-                                <q-date v-model="scout.bornDate"></q-date>
-                            </q-popup-proxy>
-                        </q-icon>
-                    </template>
-                </q-input>
-                <q-btn label="Registrate" style="width: 100%;" type="submit" color="primary" @click="register" />
+                <q-form @submit.prevent="validateCode">
+                    <q-input class="q-ma-xs" filled v-model="scout.name" label="Nombre"
+                    :rules="[val=>val&&val.length>0 || 'Este campo no puede estar vacío']" />
+                    <q-input class="q-ma-xs" filled v-model="scout.lastName" label="Apellido"
+                    :rules="[val=>val&&val.length>0 || 'Este campo no puede estar vacío']" />
+                    <q-input class="q-ma-xs" filled v-model="scout.dni" label="Cedula"
+                        :rules="[val=>val&&val.length==10 || 'La cédula tiene 10 digitos']" />
+                    <!-- <q-input class="q-ma-xs" filled v-model="scout.phone" label="Telefono"
+                    :rules="[val=>val&&val.length==10 || 'El número de teléfono debe de tener 10 dígitos']" /> -->
+                    <q-input class="q-ma-xs" filled v-model="scout.email" label="Email"   type="email"
+                        :rules="[val=>val&&val.length>0 || 'Este campo no puede estar vacío']"/>
+                    <!-- <q-select class="q-ma-xs" filled :options="bloodType" v-model="scout.typeBlood"
+                        label="Tipo de Sangre">
+                    </q-select> -->
+                    <q-select class="q-ma-xs" emit-value map-options v-model="scout.gender" :options="typeGender"
+                        option-label="name" option-value="id" label="Genero"  :rules="[val=>val|| 'Debes de seleccionar']">
+                    </q-select>
+                    <q-input class="q-ma-xs" filled label="Fecha de Nacimiento" v-model="scout.bornDate" mask="date"
+                        :rules="['date']">
+                        <template v-slot:append>
+                            <q-icon name="event" class="cursor-pointer">
+                                <q-popup-proxy>
+                                    <q-date v-model="scout.bornDate"></q-date>
+                                </q-popup-proxy>
+                            </q-icon>
+                        </template>
+                    </q-input>
+                    <q-btn label="Registrate" style="width: 100%;" type="submit" color="primary" @click="register" />
+                </q-form>
             </div>
         </div>
     </div>
@@ -70,8 +78,14 @@ const scout = reactive({
 const codeValidate = ref('')
 const persistent = ref(false)
 const typeGender = [
-    '1',
-    '0'
+    {
+        name: 'Hombre',
+        id: 1,
+    },
+    {
+        name: 'Mujer',
+        id: 2
+    }
 ]
 const bloodType = [
     '+O',

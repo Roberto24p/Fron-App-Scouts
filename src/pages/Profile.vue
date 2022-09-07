@@ -1,5 +1,5 @@
 <template >
-  <div class="q-pa-md " v-if="store.role == 6">
+  <div class="q-pa-md " v-show="store.role == 6">
     <div class="row q-col-gutter-md">
       <div class="col-md-6 col-xs-12">
         <q-card class="my-card  q-py-sm">
@@ -63,7 +63,7 @@
           <q-separator />
           <q-item>
             <q-item-section>
-              <q-btn color="primary" icon-right="fas fa-chevron-right" label="Detalle" flat />
+              <!-- <q-btn color="primary" icon-right="fas fa-chevron-right" label="Detalle" flat /> -->
             </q-item-section>
           </q-item>
         </q-card>
@@ -75,7 +75,6 @@
       <div class="col-md-6 col-xs-12">
         <q-toolbar>
           <q-toolbar-title class="text-overline">Información</q-toolbar-title>
-          <q-btn flat text-color="light-blue-8" label="Show All" />
         </q-toolbar>
 
         <q-card class="my-card" style="padding: 33px 0px 33px 0px;">
@@ -102,7 +101,6 @@
       <div class="col-md-6 col-xs-12">
         <q-toolbar>
           <q-toolbar-title class="text-overline">Reconocimientos Obtenidos</q-toolbar-title>
-          <q-btn flat text-color="light-blue-8" label="Show All"></q-btn>
         </q-toolbar>
         <q-card v-for="recog in recognitions " v-bind:key="recog.id" class="my-card q-my-sm">
           <q-item>
@@ -125,7 +123,7 @@
       </div>
     </div>
   </div>
-  <div class="q-pa-md " v-else>
+  <div class="q-pa-md " v-show="store.role == 4 || store.role == 5">
     <div class="row q-col-gutter-md">
       <div class="col-md-12 col-xs-12">
         <q-card class="my-card  q-py-sm">
@@ -157,12 +155,9 @@
 
       </div>
     </div>
-    <div class="row q-col-gutter-md">
+    <div class="row q-col-gutter-md q-mt-md">
       <div class="col-md-6 col-xs-12">
-        <q-toolbar>
-          <q-toolbar-title class="text-overline">Información</q-toolbar-title>
-          <q-btn flat text-color="light-blue-8" label="Show All" />
-        </q-toolbar>
+      
 
         <q-card class="my-card" style="padding: 33px 0px 33px 0px;">
           <q-item>
@@ -178,14 +173,84 @@
 
             </q-item-section>
             <q-item-section>
-          
+
               <q-item-label class="text-green"><strong style="text-transform: capitalize;"> Unidad: {{
-                  profile.unitScout
+              profile.unitScout
               }}</strong> </q-item-label>
 
             </q-item-section>
 
           </q-item>
+        </q-card>
+      </div>
+    </div>
+  </div>
+  <div class="q-pa-md " v-show="store.role == 1 || store.role == 2">
+    <div class="row q-col-gutter-md">
+      <div class="col-md-12 col-xs-12">
+        <q-card class="my-card  q-py-sm">
+          <q-item>
+            <q-item-section avatar>
+              <q-avatar square>
+                <img
+                  :src="store.avatar == '' ? 'https://png.pngtree.com/png-vector/20190116/ourlarge/pngtree-vector-avatar-icon-png-image_322275.jpg' : store.avatar">
+              </q-avatar>
+            </q-item-section>
+
+            <q-item-section>
+              <q-item-label><strong>{{ store.name }}</strong> </q-item-label>
+              <q-item-label caption>
+                {{ store.email }}
+              </q-item-label>
+            </q-item-section>
+
+          </q-item>
+
+          <q-separator />
+          <q-separator />
+          <q-item>
+            <q-item-section>
+              <q-btn color="grey" label="Editar Información" @click="redirect('profileEdit')" />
+            </q-item-section>
+          </q-item>
+        </q-card>
+
+      </div>
+    </div>
+  
+    <div class="row q-col-gutter-md">
+      <div class="col-md-12 col-xs-12 q-mt-md">
+        <q-card class="my-card ">
+          <q-item>
+            <p style="font-size: 25px;margin-top:10px ">Reportes</p>
+          </q-item>
+        </q-card>
+      </div>
+      <div class="col-md-4 col-xs-12 q-mt-md">
+        <q-card class="my-card " style="padding: 33px 0px 33px 0px;">
+          <q-item style="margin-left: 100px;">
+            <q-btn padding="xl" icon="summarize" @click="reporte" />
+          </q-item>
+          <p style="margin-left: 115px">Inscripciones</p>
+
+        </q-card>
+      </div>
+      <div class="col-md-4 col-xs-12 q-mt-md">
+        <q-card class="my-card " style="padding: 33px 0px 33px 0px;">
+          <q-item style="margin-left: 100px;">
+            <q-btn padding="xl" icon="explore" />
+          </q-item>
+          <p style="margin-left: 130px">Dirigentes</p>
+
+        </q-card>
+      </div>
+      <div class="col-md-4 col-xs-12 q-mt-md">
+        <q-card class="my-card " style="padding: 33px 0px 33px 0px;">
+          <q-item style="margin-left: 100px;">
+            <q-btn padding="xl" icon="summarize" />
+          </q-item>
+          <p style="margin-left: 115px">Inscripciones</p>
+
         </q-card>
       </div>
     </div>
@@ -201,6 +266,8 @@ import { useRouter } from "vue-router"
 import { useUsersStore } from 'src/store/user-store'
 import { useQuasar } from 'quasar'
 import ServicesDirecting from 'src/services/ServicesDirecting'
+import axios from 'axios'
+
 const $q = useQuasar()
 const store = useUsersStore()
 $q.loading.show()
@@ -280,7 +347,17 @@ if (store.role == 6) {
 
 }
 
+const reporte = async ()=> {
+
+  const response = await axios.get(`${process.env.BASE_API}/pdf/inscriptions/groups`, {
+    responseType: "blob"
+  })
+  const url = window.URL.createObjectURL(new Blob([response.data],  { type: 'application/pdf' }))
+  window.open(url, '_blank')
+       
+}
 const redirect = (ruta) => {
+
   router.push(ruta)
 }
 

@@ -6,7 +6,9 @@
             <template v-slot:body-cell-actions="props">
                 <q-td :props="props">
                     <q-btn color="yellow" icon="mode_edit" class="q-mx-sm" @click="onEdit(props.row)"></q-btn>
-                    <q-btn color="red" icon="delete" @click="onDelete(props.row)"></q-btn>
+                    <q-btn color="red" icon="delete" @click="onDelete(props.row)" v-show="props.row.state == 'A'">
+                    </q-btn>
+                    <q-btn color="green" icon="add" @click="activate(props.row)" v-show="props.row.state!='A'"></q-btn>
                 </q-td>
             </template>
             <template v-slot:body-cell-img="props">
@@ -35,11 +37,11 @@
                             :rules="[val => val && val.length > 0 || 'Obligatorio']" />
                         <q-select style="text-transform: capitalize" class="col-4" v-model="group"
                             @input="onChangeFocus" label="Selecciona Grupo" :options="groups" emit-value map-options
-                            option-label="name" option-value="id">
+                            option-label="name" option-value="id" :disable="store.role == 5 || store.role == 4 ">
                         </q-select>
                         <q-select style="text-transform: capitalize" class="col-4 q-mt-md" option-label="name"
-                            v-model="team.unitId" emit-value map-options option-value="id" label="Selecciona Unidad"
-                            :options="units">
+                            v-model="team.unitId" emit-value map-options option-value="id" :disable="store.role == 5"
+                            label="Selecciona Unidad" :options="units">
                         </q-select>
                     </div>
                 </q-form>
@@ -63,7 +65,7 @@
             </q-card-section>
 
             <q-card-actions align="right" class="bg-white text-teal">
-                <q-btn flat label="Si" v-close-popup color="red" @click="deleteUnit" />
+                <q-btn flat label="Si" v-close-popup color="red" @click="deleteTeam" />
                 <q-btn flat label="No" v-close-popup />
             </q-card-actions>
         </q-card>
@@ -75,6 +77,10 @@ import ServicesGroup from 'src/services/ServicesGroup';
 import ServicesUnit from 'src/services/ServicesUnit';
 import { ref, reactive, watch } from 'vue'
 import { useUsersStore } from '../store/user-store'
+import { useQuasar } from 'quasar'
+
+const $q = useQuasar()
+$q.loading.show()
 const store = useUsersStore()
 const columns = [
     {
@@ -125,12 +131,15 @@ const saveTeam = () => {
         .then(response => {
             if (response.success == 1) {
                 getTeams()
+                dialog.value = false
             }
 
 
         })
 }
 const openDialogCreate = () => {
+    getTeams()
+
     dialog.value = true
     bttForm.value = true
 }
@@ -155,7 +164,7 @@ const onDelete = (row) => {
     deleteDialog.value = true
 }
 
-const deleteUnit = () => {
+const deleteTeam = () => {
     ServicesTeam.delete(team.id)
         .then(response => {
             console.log(response)
@@ -168,16 +177,29 @@ const getTeams = () => {
             .then(response => {
                 teams.value = response.teams
                 console.log(response)
+                $q.loading.hide()
             })
-    }else if(store.role == 5){
+    }else if(store.role == 5 || store.role == 4 ){
         ServicesTeam.teamsDirecting()
             .then(response => {
+                group.value = response.unit.group.id
+                team.unitId = response.unit.id
                 teams.value = response.teams
                 console.log(response)
+                $q.loading.hide()
+
             })
     }
 }
 
+const activate = (teamId) => {
+    ServicesTeam.activate(teamId.id)
+        .then(response => {
+            console.log(response)
+            getTeams()
+        })
+
+}
 const updateTeam = () => {
     ServicesTeam.update(team)
         .then(response => {
@@ -186,8 +208,9 @@ const updateTeam = () => {
             console.log(response)
         })
 }
-getTeams()
 watch(() => group.value, onChangeFocus)
+
+getTeams()
 </script>
 <style >
 </style>

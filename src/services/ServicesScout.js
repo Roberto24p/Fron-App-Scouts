@@ -114,6 +114,17 @@ const ServicesScout = {
         })
         const data = await response.json()
         return data
+    },
+    getTeamUnit: async (scoutId) => {
+        const token = localStorage.getItem('token')
+        const response = await fetch(`${process.env.BASE_API}/scout/team/unit/${scoutId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        })
+        const data = await response.json()
+        console.log(data)
+        return data
     }
 }
 

@@ -18,7 +18,6 @@
         <q-list>
           <q-item-label header class="text-grey-8">
           </q-item-label>
-
           <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" :show="link.show" />
         </q-list>
       </q-scroll-area>
@@ -28,8 +27,9 @@
           <q-avatar size="56px" class="q-mb-sm">
             <img :src="storeUser.avatar == '' ? 'https://png.pngtree.com/png-vector/20190116/ourlarge/pngtree-vector-avatar-icon-png-image_322275.jpg' :storeUser.avatar ">
           </q-avatar>
-          <div class="text-weight-bold">{{ storeUser.name }}</div>
+          <div class="text-weight-bold">{{ storeUser.name }} /  {{ storeUser.nameRole }} </div>
           <div>{{ storeUser.email }}</div>
+       
           <q-btn color="red" size="xs" @click="signOnut">Cerrar sesion</q-btn>
         </div>
 
@@ -88,7 +88,7 @@ const linksList = [
       name: 'scout'
     },
     show: true,
-    roles: [1, 5]
+    roles: [1, 5, 4]
   },
   {
     title: 'Unidades',
@@ -98,7 +98,7 @@ const linksList = [
       name: 'unit'
     },
     show: true,
-    roles: [1, 4, 5]
+    roles: [1, 4]
   },
   {
     title: 'Equipos',

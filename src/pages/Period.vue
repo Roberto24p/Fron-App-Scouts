@@ -5,6 +5,10 @@
             <template v-slot:body-cell-actions="props">
                 <q-td :props="props">
                     <q-btn color="yellow" icon="mode_edit" class="q-mx-sm" @click="onEdit(props.row)"></q-btn>
+                    <q-btn color="blue" label="Activar" v-show="props.row.state != 'Activo'" class="q-mx-sm"
+                        @click="onActivate(props.row)"></q-btn>
+                    <q-btn color="green" icon="done_all" label="Activo" v-show="props.row.state == 'Activo'"
+                        class="q-mx-sm"></q-btn>
                 </q-td>
             </template>
             <template v-slot:loading>
@@ -12,6 +16,7 @@
             </template>
         </q-table>
     </div>
+  
     <q-dialog v-model="dialog" transition-show="slide-up" transition-hide="slide-down">
         <q-card style="width: 700px; max-width: 80vw;">
             <q-bar class="bg-warning q-pa-lg">
@@ -60,11 +65,31 @@
                 <q-btn flat label="Guardar" @click="postInscription" v-show="bttForm"></q-btn>
                 <q-btn flat label="Actualizar" @click="putInscription" v-show="!bttForm"></q-btn>
             </q-card-actions>
-        
+
         </q-card>
     </q-dialog>
+    <q-dialog v-model="small">
+        <q-card style="width: 300px">
+            <q-card-section>
+                <div class="text-h6">Advertencia</div>
+            </q-card-section>
+
+            <q-card-section class="q-pt-none">
+                ¿Estas seguro que deseas activar este periodo? <br>
+                Recuerda que solo puedes tener un periodo activo
+
+            </q-card-section>
+
+            <q-card-actions align="right" class="bg-white text-teal">
+                <q-btn flat label="Activar" @click="activate" v-close-popup />
+                <q-btn flat label="No" v-close-popup />
+            </q-card-actions>
+        </q-card>
+    </q-dialog>
+
 </template>
 <script setup>
+import ServicesPeriod from 'src/services/ServicesPeriod';
 import { reactive, ref } from 'vue'
 import ServicesInscription from '../services/ServicesInscription';
 const columns = [
@@ -84,6 +109,7 @@ const columns = [
 const bttForm = ref(false)
 const dialog = ref(false)
 const inscirptionsRow = ref([])
+const small = ref(false)
 const inscription = reactive({
     dateStart: '',
     dateEnd: '',
@@ -118,6 +144,19 @@ const putInscription = () => {
 const getInscriptions = () => {
     ServicesInscription.get()
         .then(response => inscirptionsRow.value = response.data)
+}
+
+const onActivate = (row) => {
+    inscription.id =  row.id
+    small.value = true
+    ServicesPeriod.activate()
+}
+
+const activate = async () => {
+    const response = await ServicesPeriod.activate(inscription.id)
+    if(response.success){
+        getInscriptions()
+    }
 
 }
 

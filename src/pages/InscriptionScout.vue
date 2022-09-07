@@ -109,12 +109,6 @@
                         </div>
                         <div class="col-6 q-mb-lg">
                             <div class="text-h5">
-                                <template v-if="profile.gender == 1"><strong>Género: </strong> Hombre</template>
-                                <template v-else><strong>Género: </strong> Mujer</template>
-                            </div>
-                        </div>
-                        <div class="col-6 q-mb-lg">
-                            <div class="text-h5">
                                 <strong>Teléfono: </strong>
                                 {{ profile.phone }}
                             </div>
@@ -187,12 +181,7 @@
                                 <template v-else><strong>Género: </strong> Mujer</template>
                             </div>
                         </div>
-                        <div class="col-6 q-mb-lg">
-                            <div class="text-h5">
-                                <template v-if="profile.gender == 1"><strong>Género: </strong> Hombre</template>
-                                <template v-else><strong>Género: </strong> Mujer</template>
-                            </div>
-                        </div>
+               
                         <div class="col-6 q-mb-lg">
                             <div class="text-h5">
                                 <strong>Teléfono: </strong>

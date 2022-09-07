@@ -58,7 +58,14 @@
 
             <div class="col-md-6 col-sm-12 ">
                 <q-scroll-area class="fit col-sm-12" style="height: 100%; max-width: 100%;">
-                    <q-card class="my-card  q-py-sm">
+                    <q-card class="my-card  ">
+                        <q-item style="position:sticky; top:1px; z-index: 100;background-color: white; border:#1976D2 solid 1px" >
+                            <q-item-section>
+                                <q-item-label caption>
+                                    Plan de Adelanto
+                                 </q-item-label>
+                            </q-item-section>
+                        </q-item>
                         <q-item v-for="recog in recogComplete" v-bind:key="recog.id">
                             <q-item-section>
                                 <q-item>
@@ -151,8 +158,8 @@ const $q = useQuasar()
 const router = useRoute()
 
 const profile = reactive({
-    name: '',
-    email: ''
+name: '',
+email: ''
 })
 const checks = reactive({})
 const checksModal = ref({})
@@ -165,111 +172,111 @@ const recogComplete = ref([])
 let topicsCheckArray = []
 //METODOS
 const loadAdvancePlan = () => {
-    ServicesAdvancePlan.getChecks(router.params.scoutId)
-        .then(data => {
-            console.log(data)
-            if (data.topics.length == 0) {
-                hasAdvancePlan.value = false
-                return 0
-            }
-            data.topics.forEach(topic => {
-                // console.log(topic)
-                checks[topic.topic_id].check = true
+ServicesAdvancePlan.getChecks(router.params.scoutId)
+.then(data => {
+console.log(data)
+if (data.topics.length == 0) {
+hasAdvancePlan.value = false
+return 0
+}
+data.topics.forEach(topic => {
+// console.log(topic)
+checks[topic.topic_id].check = true
 
-            })
-        })
+})
+})
 }
 ServicesAdvancePlan.advancePlanDetails(router.params.scoutId)
-    .then(data => {
-        data[0].recognitions.forEach(info => {
-            info.topics.forEach(items => {
-                const topic = {
-                    id: items.id,
-                    name: items.name,
-                    check: false
-                }
-                checks[items.id] = topic
-            })
-        })
-        advancePlan.value = data[0].recognitions
-        tab.value = advancePlan.value[0].name
+.then(data => {
+data[0].recognitions.forEach(info => {
+info.topics.forEach(items => {
+const topic = {
+id: items.id,
+name: items.name,
+check: false
+}
+checks[items.id] = topic
+})
+})
+advancePlan.value = data[0].recognitions
+tab.value = advancePlan.value[0].name
 
-    })
+})
 const alertModal = () => {
-    alertDialog.value = true
+alertDialog.value = true
 }
 const updateAdvancePlan = () => {
-    const token = localStorage.getItem('token')
-    $q.loading.show()
+const token = localStorage.getItem('token')
+$q.loading.show()
 
-    fetch(`${process.env.BASE_API}/checkadvanceplan`, {
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            scout_id: router.params.scoutId,
-            topics: topicsCheckArray,
-        }),
-        method: 'POST'
-    }).then(response => response.json())
-        .then(data => {
-            $q.loading.hide()
+fetch(`${process.env.BASE_API}/checkadvanceplan`, {
+headers: {
+'Authorization': `Bearer ${token}`,
+'Content-Type': 'application/json'
+},
+body: JSON.stringify({
+scout_id: router.params.scoutId,
+topics: topicsCheckArray,
+}),
+method: 'POST'
+}).then(response => response.json())
+.then(data => {
+$q.loading.hide()
 
-            console.log(data)
-            data.topics.forEach(topic => {
-                console.log(checks[topic.id])
-                checks[topic.topic_id].check = true
-            })
-            checksModal.value = {}
-            topicsCheckArray = []
-            $q.notify({
-                type: 'positive',
-                message: 'Plan de adelanto actualizado correctamente',
-                timeout: '2000'
-            })
-            getRecognitionsComplete()
-            loadAdvancePlan()
-            getPercentAdvancePlan()
-        })
-        .catch(e => console.log(e))
+console.log(data)
+data.topics.forEach(topic => {
+console.log(checks[topic.id])
+checks[topic.topic_id].check = true
+})
+checksModal.value = {}
+topicsCheckArray = []
+$q.notify({
+type: 'positive',
+message: 'Plan de adelanto actualizado correctamente',
+timeout: '2000'
+})
+getRecognitionsComplete()
+loadAdvancePlan()
+getPercentAdvancePlan()
+})
+.catch(e => console.log(e))
 
 }
 const checkTopic = (topicId) => {
-    console.log(topicId)
-    const index = topicsCheckArray.findIndex(element => element == topicId)
-    if (index == -1) {
-        checksModal.value[topicId] = topicId
+console.log(topicId)
+const index = topicsCheckArray.findIndex(element => element == topicId)
+if (index == -1) {
+checksModal.value[topicId] = topicId
 
-        topicsCheckArray.push(topicId)
-    } else {
-        topicsCheckArray.splice(index, 1)
-    }
-    return 0
+topicsCheckArray.push(topicId)
+} else {
+topicsCheckArray.splice(index, 1)
+}
+return 0
 }
 const getScoutData = () => {
-    ServicesScout.getScoutData(router.params.scoutId)
-        .then(response => {
-            profile.name = response.scout.person.name
-            profile.email = response.scout.person.user.email
-            console.log(response)
-        })
+ServicesScout.getScoutData(router.params.scoutId)
+.then(response => {
+profile.name = response.scout.person.name
+profile.email = response.scout.person.user.email
+console.log(response)
+})
 }
 
 const getPercentAdvancePlan = () => {
-    ServicesAdvancePlan.getPercent(router.params.scoutId)
-        .then(response => {
-            percent.value = response
-        })
+ServicesAdvancePlan.getPercent(router.params.scoutId)
+.then(response => {
+percent.value = response
+})
 }
 
 const getRecognitionsComplete = () => {
-    ServicesAdvancePlan.getRecognitionsComplete(router.params.scoutId)
-        .then(response => {
-            if (response.success == 1) {
-                recogComplete.value = response.recog
-            }
-        })
+ServicesAdvancePlan.getRecognitionsComplete(router.params.scoutId)
+.then(response => {
+if (response.success == 1) {
+recogComplete.value = response.recog
+}
+})
 }
 getRecognitionsComplete()
 getPercentAdvancePlan()

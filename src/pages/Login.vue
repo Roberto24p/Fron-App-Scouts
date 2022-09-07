@@ -1,25 +1,41 @@
 <template>
-    <div class="row">
+    <div class="row ">
         <div class="col-lg-7 col-md-7 col-md-7">
             <q-img height="649px" src="https://c1.wallpaperflare.com/preview/688/239/658/boy-scout-scouting-asia.jpg">
             </q-img>
         </div>
         <div class="col-lg-5 col-md-5 col-xs-12 q-pa-md">
             <q-form>
-                <div class="text-h5 text-center q-pt-xl q-mt-xl">Login</div>
-                <div class="q-pa-sm col-sm-12">
-                    <q-input filled v-model="loginForm.username" label="Usuario" hint="" lazy-rules />
-                    <q-input filled v-model="loginForm.password" label="Contraseña" hint="" lazy-rules type="password" />
+                <div class="text-center">
+                    <img src="../assets/logo.png" style="height: 300px; width: 300px" alt="">
                 </div>
-                <div class="q-pa-sm">
-                    <a  class="float-right" style="text-decoration: none;" @click="redirect">¡Registrate!</a>
-
+                <div class="q-pa-sm col-sm-12 q-mb-md">
+                    <q-input filled v-model="loginForm.username" label="Correo" hint="" lazy-rules />
+                    <q-input filled v-model="loginForm.password" label="Contraseña" hint="" lazy-rules
+                        type="password" />
+                    <p style="position:absolute; color:red" v-show="messageError">{{ messageError }}</p>
                 </div>
-                <q-btn label="Login" style="width: 100%;" type="submit" color="primary" @click="login" />
-        {{ response }}
+                <div class="q-pa-sm ">
+                    <a class="float-left" style="text-decoration: none; color: green; cursor:pointer"
+                        @click="redirectRecoverPassword">¿Perdiste tu contraseña?</a>
+                    <a class="float-right" style="text-decoration: none; color: green; cursor:pointer"
+                        @click="redirect">¡Registrate!</a>
+                </div>
+                <q-btn label="Login" class="q-mt-md" style="width: 100%;" type="submit" color="primary"
+                    @click="login" />
             </q-form>
         </div>
     </div>
+    <q-dialog v-model="dialogSuccess">
+        <q-card style="width: 300px">
+            <q-card-section>
+                <div class="text-h6" style="color:green">Autentitación Correcta</div>
+            </q-card-section>
+            <q-card-section class="q-pt-none">
+                Redirigiendo...
+            </q-card-section>
+        </q-card>
+    </q-dialog>
 </template>
 
 <script setup>
@@ -30,36 +46,32 @@ import { useUsersStore } from '../store/user-store'
 const store = useUsersStore()
 const router = useRouter()
 const loginForm = reactive({
-    username: '',
-    password: ''
+username: '',
+password: ''
 })
 const response = ref(null)
-const login =  async () => {
-    if(await store.access(loginForm))
-         router.push('/profile')
-    else
-        alert('Error')
+const messageError = ref('')
+const dialogSuccess = ref(false)
+const login = async () => {
+response.value = await store.access(loginForm)
+console.log(response.value)
+    if (response.value.success) {
+        setTimeout(() => {
+            router.push('/profile')
+        }, 1000)
+        dialogSuccess.value = true
+    } else {
+        messageError.value = response.value.error
+    }
+}
+const test = () => {
+    alert('Hola mundo')
 }
 const redirect = () => {
     router.push('/register')
 }
-// const login = async function (e) {
-//     e.preventDefault()
-//     const response = await ServicesAuth.auth(loginForm)
-//     console.log(response)
-//     if (response.success && response.token != null) {
-//         localStorage.setItem('token', response.token.token)
-//         store.$patch({
-//             user: {
-//                 name: response.user.name,
-//                 email: response.user.email
-//             }
-//         })
-//         router.push('/')
-//     } else {
-//         alert('Error')
-//     }
-//     response.value = response
-//     console.log(response)
-// }
+const redirectRecoverPassword= () => {
+    router.push('/recoverpassword')
+}
+
 </script>
