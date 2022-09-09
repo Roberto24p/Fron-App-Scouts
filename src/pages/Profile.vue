@@ -101,25 +101,33 @@
       <div class="col-md-6 col-xs-12">
         <q-toolbar>
           <q-toolbar-title class="text-overline">Reconocimientos Obtenidos</q-toolbar-title>
+          <q-btn color="green" @click="reporteAdvancePlan">Reporte de tu plan de adelanto</q-btn>
+          <q-inner-loading :showing="visible">
+            <q-spinner-gears size="50px" color="primary" />
+          </q-inner-loading>
         </q-toolbar>
-        <q-card v-for="recog in recognitions " v-bind:key="recog.id" class="my-card q-my-sm">
-          <q-item>
+        <div>
 
-            <q-item-section>
-              <q-item v-if="recogGets[recog.id]" bg-success>
-                <q-icon style="font-size: 2em" name="check" color="green" class="q-ml-md"></q-icon>
-              </q-item>
-              <q-item v-else>
-                <q-icon style="font-size: 2em" name="close" color="red" class="q-ml-md"></q-icon>
-              </q-item>
-            </q-item-section>
+          <q-card v-for="recog in recognitions " v-bind:key="recog.id" class="my-card q-my-sm"
+            v-show="showRecognitions">
+            <q-item>
 
-            <q-item-section>
-              <q-item-label><strong>{{ recog.name }}</strong></q-item-label>
-            </q-item-section>
-          </q-item>
-        </q-card>
+              <q-item-section>
+                <q-item v-if="recogGets[recog.id]" bg-success>
+                  <q-icon style="font-size: 2em" name="check" color="green" class="q-ml-md"></q-icon>
+                </q-item>
+                <q-item v-else>
+                  <q-icon style="font-size: 2em" name="close" color="red" class="q-ml-md"></q-icon>
+                </q-item>
+              </q-item-section>
 
+              <q-item-section>
+                <q-item-label><strong>{{ recog.name }}</strong></q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-card>
+
+        </div>
       </div>
     </div>
   </div>
@@ -157,7 +165,7 @@
     </div>
     <div class="row q-col-gutter-md q-mt-md">
       <div class="col-md-6 col-xs-12">
-      
+
 
         <q-card class="my-card" style="padding: 33px 0px 33px 0px;">
           <q-item>
@@ -185,7 +193,7 @@
       </div>
     </div>
   </div>
-  <div class="q-pa-md " v-show="store.role == 1 || store.role == 2">
+  <div class="q-pa-md " v-show="store.role == 1 || store.role == 2 || store.role == 3">
     <div class="row q-col-gutter-md">
       <div class="col-md-12 col-xs-12">
         <q-card class="my-card  q-py-sm">
@@ -217,7 +225,7 @@
 
       </div>
     </div>
-  
+
     <div class="row q-col-gutter-md">
       <div class="col-md-12 col-xs-12 q-mt-md">
         <q-card class="my-card ">
@@ -261,13 +269,14 @@
 import ServicesProfile from 'src/services/ServicesProfile'
 import ServicesInscription from 'src/services/ServicesInscription'
 import ServicesAdvancePlan from 'src/services/ServicesAdvancePlan'
+import ServicesReport from 'src/services/ServicesReport'
 import { reactive, ref } from "vue"
 import { useRouter } from "vue-router"
 import { useUsersStore } from 'src/store/user-store'
 import { useQuasar } from 'quasar'
 import ServicesDirecting from 'src/services/ServicesDirecting'
-import axios from 'axios'
-
+const showRecognitions = ref(false)
+const visible = ref(false)
 const $q = useQuasar()
 const store = useUsersStore()
 $q.loading.show()
@@ -318,6 +327,8 @@ if (store.role == 6) {
     })
 
   const geRecognitionsComplete = (scout_id) => {
+    showRecognitions.value = false
+    visible.value = true
     ServicesAdvancePlan.getRecognitionsComplete(scout_id)
       .then(response => {
         response.recog.forEach(item => {
@@ -325,7 +336,8 @@ if (store.role == 6) {
         })
         console.log(response)
         $q.loading.hide()
-
+        visible.value = false
+        showRecognitions.value = true
       })
   }
   const getPercentAdvancePlan = (scout_id) => {
@@ -347,14 +359,16 @@ if (store.role == 6) {
 
 }
 
-const reporte = async ()=> {
-
-  const response = await axios.get(`${process.env.BASE_API}/pdf/inscriptions/groups`, {
-    responseType: "blob"
+const reporte = async () => {
+  router.push({
+    name: 'ReportPeriods'
   })
-  const url = window.URL.createObjectURL(new Blob([response.data],  { type: 'application/pdf' }))
-  window.open(url, '_blank')
-       
+}
+
+const reporteAdvancePlan = async () => {
+  $q.loading.show()
+  const response = await ServicesReport.reporteAdvancePlan()
+  $q.loading.hide()    
 }
 const redirect = (ruta) => {
 
@@ -364,4 +378,5 @@ const redirect = (ruta) => {
 </script>
 
 <style >
+
 </style>

@@ -13,9 +13,9 @@
             </q-card>
         </div>
         <div class="col-3" v-for="recognition in recognitionCards" v-bind:key="recognition.id">
-            <recognition-card :tittle="recognition.name" :items="recognition.items" ></recognition-card>
+            <recognition-card :tittle="recognition.name" :items="recognition.topics"></recognition-card>
         </div>
-   
+
     </div>
 </template>
 
@@ -36,10 +36,12 @@ console.log(router.params)
 ServicesAdvancePlan.advancePlanItems(router.params.idAdvancePlan)
     .then(data => {
         console.log(data)
-    
-        advancePlan.description = data[0].Description
-        advancePlan.tittle = data[0].tittle
-        recognitionCards.value = data[0].recognitions
+        if (data.success) {
+            advancePlan.description = data.advancePlan.Description
+            advancePlan.tittle = data.advancePlan.tittle
+            recognitionCards.value = data.advancePlan.recognitions
+        }
+
     })
 
 </script>

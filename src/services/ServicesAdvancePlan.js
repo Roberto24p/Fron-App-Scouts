@@ -1,4 +1,15 @@
 const ServicesAdvancePlan = {
+    store: async () => {
+        const token = localStorage.getItem('token')
+        const response = await fetch(`${process.env.BASE_API}/advancePlan`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
+        const data = await response.json()
+        return data
+    },
     get: async () => {
         const response = await fetch(`${process.env.BASE_API}/advancePlan`)
         const data = await response.json()
@@ -7,7 +18,7 @@ const ServicesAdvancePlan = {
     advancePlanItems: async (id) => {
         const token = localStorage.getItem('token')
 
-        const response = await fetch(`${process.env.BASE_API}/advancePlan/scout/${id}`, {
+        const response = await fetch(`${process.env.BASE_API}/advancePlan/${id}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -61,6 +72,39 @@ const ServicesAdvancePlan = {
         const data = await response.json()
         return data
     },
+    deleteRecognition: async (recognitionId, advancePlanId) => {
+        const token = localStorage.getItem('token')
+        const response = await fetch(`${process.env.BASE_API}/recognition/delete/${recognitionId}/${advancePlanId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
+        const data = await response.json()
+        return data
+    },
+    disableAdvancePlan: async (advancePlan) => {
+        const token = localStorage.getItem('token')
+        const response = await fetch(`${process.env.BASE_API}/disable/advanceplan/${advancePlan}/`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
+        const data = await response.json()
+        return data
+    },
+    enableAdvancePlan: async (advancePlan) => {
+        const token = localStorage.getItem('token')
+        const response = await fetch(`${process.env.BASE_API}/enable/advanceplan/${advancePlan}/`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
+        const data = await response.json()
+        return data
+    }
 
 }
 

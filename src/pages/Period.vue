@@ -149,7 +149,6 @@ const getInscriptions = () => {
 const onActivate = (row) => {
     inscription.id =  row.id
     small.value = true
-    ServicesPeriod.activate()
 }
 
 const activate = async () => {

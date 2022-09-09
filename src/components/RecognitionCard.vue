@@ -8,9 +8,9 @@
             <q-card-section class="q-pt-xs">
                 <q-list>
                     <q-item-section>
-                        <recognition-item v-for="i in items" v-bind:key="i.id" :item="i.name"></recognition-item>
+                        <recognition-item v-for="i in items" v-bind:key="i.id" :item="i.name">
+                        </recognition-item>
                     </q-item-section>
-
                 </q-list>
             </q-card-section>
 
