@@ -1,19 +1,36 @@
 <template>
     <div class="q-pa-md">
-        <q-table title="Inscripciones" :rows="row" :columns="columns" row-key="name">
+        <div class="row q-col-gutter-md q-mb-md">
+            <div class="col-md-12 col-xs-12">
+                <q-card class="my-card q-pa-lg ">
+                    <q-select v-model="periodSelect" :options="periods" option-label="description" option-value="id"
+                        emit-value label="Selecciona un periodo" map-options />
+                </q-card>
+            </div>
+        </div>
+
+        <q-table title="Inscripciones" :rows="row" :columns="columns" row-key="name" :filter="filter">
+            <template v-slot:top-left>
+                <q-btn color="primary" icon-right="archive" label="Export to csv" no-caps @click="exportTable" />
+            </template>
+            <template v-slot:top-right>
+                <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+                    <template v-slot:append>
+                        <q-icon name="search" />
+                    </template>
+                </q-input>
+            </template>
             <template v-slot:body-cell-state_inscription="props">
                 <q-td :props="props">
                     <q-btn
                         :color="props.row.state_inscription == 'confirmado' ? 'green' :
                         props.row.state_inscription == 'espera' ? 'warning' : props.row.state_inscription == 'denegado' ? 'negative' : 'nada'"
-                        class="q-mx-sm" >{{ props.row.state_inscription }}</q-btn>
+                        class="q-mx-sm">{{ props.row.state_inscription }}</q-btn>
                 </q-td>
             </template>
-             <template v-slot:body-cell-actions="props">
+            <template v-slot:body-cell-actions="props">
                 <q-td :props="props">
-                    <q-btn
-                        
-                        class="q-mx-sm" @click="onEdit(props.row)">Actualizar</q-btn>
+                    <q-btn class="q-mx-sm" @click="onEdit(props.row)">Actualizar</q-btn>
                 </q-td>
             </template>
         </q-table>
@@ -78,14 +95,17 @@
                                 <strong> Cédula:</strong> {{ inscriptionData.dni }}
                             </div>
                         </div>
-                        <q-select style="text-transform: capitalize" class="col-4" v-model="inscriptionData.state_inscription" :options="status">
+                        <q-select style="text-transform: capitalize" class="col-4"
+                            v-model="inscriptionData.state_inscription" :options="status">
                         </q-select>
-                    
-                        <q-btn class="col-6" @click="showDialog(inscriptionData.image_permissions)">Ver Permiso</q-btn>
+
+                        <q-btn class="col-6" @click="showDialog(inscriptionData.image_permissions)">Ver Permiso
+                        </q-btn>
                         <q-btn class="col-6" @click="showDialog(inscriptionData.image_pay)">Ver Pago</q-btn>
                         <q-btn class="col-6" @click="showDialog(inscriptionData.image_photo)">Ver Foto</q-btn>
                         <input type="hidden" v-model="inscriptionData.id">
-                        <q-input class="col-8" v-model="inscriptionData.observations" filled type="textarea" autogrow label="Ingresa una observación" />
+                        <q-input class="col-8" v-model="inscriptionData.observations" filled type="textarea" autogrow
+                            label="Ingresa una observación" />
                     </div>
                 </q-card-section>
                 <q-card-actions align="right" class="bg-white text-teal">
@@ -113,8 +133,11 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import ServicesInscription from 'src/services/ServicesInscription';
+import ServicesPeriod from 'src/services/ServicesPeriod';
+import { exportFile } from 'quasar'
+
 const columns = [
     {
         name: 'name',
@@ -125,6 +148,7 @@ const columns = [
         format: val => `${val}`,
         sortable: true
     },
+    { name: 'dni', align: 'center', label: 'Cédula', field: row => row.dni},
     {
         name: 'group', align: 'center', label: 'Grupo', field: row => row.group
     },
@@ -149,13 +173,14 @@ const inscriptionData = reactive({
     dno: ''
 
 })
+const filter = ref('')
 const imageDialog = ref(false)
 const status = ['confirmado', 'espera', 'denegado']
 const dialog = ref(false)
 const image = ref('')
 const row = ref([])
-
-
+const periods = ref([])
+const periodSelect = ref('')
 const onEdit = (row) => {
     dialog.value = true
     inscriptionData.name = row.name
@@ -187,12 +212,9 @@ const updateInscription = () => {
 }
 
 const loadTable = () => {
-    ServicesInscription.getAllInscriptions()
+    ServicesInscription.getAllInscriptions(periodSelect.value)
         .then(data => {
-            console.log(data.data[0].state_inscription)
-            console.log(data.data)
             row.value = data.data
-            console.log(row)
         })
 }
 
@@ -201,5 +223,58 @@ const showDialog = (img) => {
     image.value = img
     imageDialog.value = true
 }
-loadTable()
+
+const getAllPeriods = async () => {
+    const response = await ServicesPeriod.all()
+    periods.value = response.data
+    if(response.data[0] != null){
+        periodSelect.value = response.data[0].id
+    }
+    console.log(response)
+}
+
+const onChangePeriod = async () => {
+    loadTable()
+}
+
+function wrapCsvValue(val, formatFn, row) {
+    let formatted = formatFn !== void 0
+        ? formatFn(val, row)
+        : val
+
+    formatted = formatted === void 0 || formatted === null
+        ? ''
+        : String(formatted)
+
+    formatted = formatted.split('"').join('""')
+    /**
+     * Excel accepts \n and \r in strings, but some other CSV parsers do not
+     * Uncomment the next two lines to escape new lines
+     */
+    // .split('\n').join('\\n')
+    // .split('\r').join('\\r')
+
+    return `"${formatted}"`
+}
+
+const exportTable = () => {
+    // naive encoding to csv format
+    const content = [columns.map(col => wrapCsvValue(col.label))].concat(
+        row.value.map(rw => columns.map(col => wrapCsvValue(
+            typeof col.field === 'function'
+                ? col.field(rw)
+                : rw[col.field === void 0 ? col.name : col.field],
+            col.format,
+            rw
+        )).join(','))
+    ).join('\r\n')
+    const status = exportFile(
+        'table-export.csv',
+        content,
+        'text/csv'
+    )
+}
+watch(() => periodSelect.value, onChangePeriod)
+getAllPeriods()
+// loadTable()
 </script>

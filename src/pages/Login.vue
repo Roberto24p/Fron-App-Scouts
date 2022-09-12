@@ -42,7 +42,7 @@
 import { reactive, ref } from "vue"
 import { useRouter } from "vue-router"
 import { useUsersStore } from '../store/user-store'
-
+import { onMounted } from "vue";
 const store = useUsersStore()
 const router = useRouter()
 const loginForm = reactive({
@@ -64,9 +64,7 @@ console.log(response.value)
         messageError.value = response.value.error
     }
 }
-const test = () => {
-    alert('Hola mundo')
-}
+
 const redirect = () => {
     router.push('/register')
 }

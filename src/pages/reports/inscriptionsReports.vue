@@ -1,7 +1,8 @@
 <template>
 
     <div class="q-pa-md">
-        <q-table title="Selecciona un periodo para generar un reporte" :rows="periods" :columns="columns" row-key="name" :loading="loading">
+        <q-table title="Selecciona un periodo para generar un reporte" :rows="periods" :columns="columns" row-key="name"
+            :loading="loading">
             <template v-slot:body-cell-actions="props">
                 <q-td :props="props">
                     <q-btn color="yellow" icon="description" class="q-mx-sm" @click="generate(props.row.id)"></q-btn>
@@ -10,7 +11,8 @@
             </template>
             <template v-slot:body-cell-state="props">
                 <q-td :props="props">
-                    <q-btn :color="props.row.state == 'Activo'? 'green': 'grey-5'" icon="language" class="q-mx-sm">{{ props.row.state }}</q-btn>
+                    <q-btn :color="props.row.state == 'Activo'? 'green': 'grey-5'" icon="language" class="q-mx-sm">{{
+                    props.row.state }}</q-btn>
                 </q-td>
             </template>
             <template v-slot:loading>
@@ -22,7 +24,7 @@
 </template>
 <script setup>
 import ServicesPeriod from "src/services/ServicesPeriod";
-import {  ref } from "vue"
+import { ref } from "vue"
 import axios from 'axios'
 
 const periods = ref([])
@@ -50,8 +52,14 @@ const getPeriods = async () => {
 }
 
 const generate = async (perioId) => {
+    const token = localStorage.getItem('token')
+
     const response = await axios.get(`${process.env.BASE_API}/pdf/inscriptions/groups/${perioId}`, {
-        responseType: "blob"
+        responseType: "blob",
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        },
     })
     const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }))
     window.open(url, '_blank')

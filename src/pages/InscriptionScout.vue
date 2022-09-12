@@ -61,7 +61,9 @@
                         <div class="col-6 q-mb-lg">
                             <div class="text-h5" style="text-transform: capitalize">
                                 <strong>Estado: </strong>
-                            <q-btn :color="profile.status == 'confirmado'? 'green': profile.status == 'espera'? 'warning': 'negative'">{{ profile.status }}</q-btn>
+                                <q-btn
+                                    :color="profile.status == 'confirmado'? 'green': profile.status == 'espera'? 'warning': 'negative'">
+                                    {{ profile.status }}</q-btn>
                             </div>
                         </div>
                         <div class="col-6 q-mb-lg">
@@ -114,9 +116,11 @@
                             </div>
                         </div>
                         <div class=" q-mb-lg" :class="{'col-6': inscriptionExist, 'col-8': !inscriptionExist}">
-                            <div class="text-h5 row">
-                                <strong class="col-3">Grupo: </strong>
-                                {{ profile.groupName }}
+                            <div class="text-h5">
+                                <p style="display: inline; font-size: 25px;">
+                                    <strong class="">Grupo: </strong>
+                                    {{ profile.groupName }}
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -134,7 +138,9 @@
                         <div class="col-6 q-mb-lg">
                             <div class="text-h5" style="text-transform: capitalize">
                                 <strong>Estado: </strong>
-                            <q-btn :color="profile.status == 'confirmado'? 'green': profile.status == 'espera'? 'warning': 'negative'">{{ profile.status }}</q-btn>
+                                <q-btn
+                                    :color="profile.status == 'confirmado'? 'green': profile.status == 'espera'? 'warning': 'negative'">
+                                    {{ profile.status }}</q-btn>
                             </div>
 
                         </div>
@@ -181,7 +187,7 @@
                                 <template v-else><strong>Género: </strong> Mujer</template>
                             </div>
                         </div>
-               
+
                         <div class="col-6 q-mb-lg">
                             <div class="text-h5">
                                 <strong>Teléfono: </strong>
@@ -205,6 +211,8 @@
             </div>
             <div class="col-4" :class="{hidden: inscriptionExist}">
                 <q-card class="my-card  q-pa-md ">
+                    <p class="text-center" style="font-size: 15px;">No olvides subir tus documentos</p>
+
                     <q-select :options="optionsDocuments" v-model="optionDocument" class="q-mb-sm"
                         style="max-width: 300px"></q-select>
                     <q-uploader @uploaded="fileComplete" :factory="factoryPermissions" style="max-width: 300px"
@@ -220,9 +228,12 @@
                 </q-card>
             </div>
             <div class="row col-12 justify-evenly">
-                <q-btn color="primary" class="col-3" @click="showDialog(profile.imagePermission)" v-show="profile.imagePermission">Ver Permiso</q-btn>
-                <q-btn color="primary" class="col-3" @click="showDialog(profile.imagePay)" v-show="profile.imagePay" >Ver Paga</q-btn>
-                <q-btn color="primary" class="col-3" @click="showDialog(profile.imagePhoto)" v-show="profile.imagePhoto">Ver Foto</q-btn>
+                <q-btn color="primary" class="col-3" @click="showDialog(profile.imagePermission)"
+                    v-show="profile.imagePermission">Ver Permiso</q-btn>
+                <q-btn color="primary" class="col-3" @click="showDialog(profile.imagePay)" v-show="profile.imagePay">Ver
+                    Paga</q-btn>
+                <q-btn color="primary" class="col-3" @click="showDialog(profile.imagePhoto)"
+                    v-show="profile.imagePhoto">Ver Foto</q-btn>
             </div>
             <!-- <div class="col-4">
                 <q-card class="my-card  q-pa-sm">
@@ -282,7 +293,7 @@ const profile = reactive({
     imagePermission: '',
     imagePhoto: '',
     observations: 'No hay ninguna observación',
-    groupName: '' 
+    groupName: ''
 })
 const period = reactive({
     start: '',
@@ -318,7 +329,18 @@ const updateInscriptionInfo = () => {
             profile.phone = data.personalInfo.phone
             profile.gender = data.personalInfo.gender
             profile.email = data.personalInfo.user.email
+            if (profile.name == '' || profile.lastName == '' || profile.nacionality == ''
+                || profile.typeBlood == '' || profile.dni == '' || profile.phone == '' || profile.gender == '' || profile.email == '') {
+                $q.dialog({
+                    title: '¡Completa tus datos personales!',
+                    message: 'Redirigiendo ',
+                    persistent: true
 
+                })
+                setTimeout(() => {
+                    router.push({ name: 'Profile' })
+                }, 100)
+            }
         })
 }
 
@@ -346,8 +368,8 @@ const inscribir = () => {
         .then(data => {
             console.log(data.success == 1)
             if (data.success == 1) {
-            inscriptionExist.value = true
-            profile.status = 'espera'
+                inscriptionExist.value = true
+                profile.status = 'espera'
                 $q.notify({
                     type: 'positive',
                     message: 'Inscripcion enviada correctamente'
@@ -359,7 +381,7 @@ const inscribir = () => {
                 })
             }
         })
-       
+
 }
 const redirect = (ruta) => {
     router.push(ruta)

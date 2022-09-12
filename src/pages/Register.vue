@@ -9,20 +9,17 @@
             <div class="q-pa-sm col-sm-12">
                 <q-form @submit.prevent="validateCode">
                     <q-input class="q-ma-xs" filled v-model="scout.name" label="Nombre"
-                    :rules="[val=>val&&val.length>0 || 'Este campo no puede estar vacío']" />
+                        :rules="[val=>val&&val.length>0 || 'Este campo no puede estar vacío']" />
                     <q-input class="q-ma-xs" filled v-model="scout.lastName" label="Apellido"
-                    :rules="[val=>val&&val.length>0 || 'Este campo no puede estar vacío']" />
+                        :rules="[val=>val&&val.length>0 || 'Este campo no puede estar vacío']" />
                     <q-input class="q-ma-xs" filled v-model="scout.dni" label="Cedula"
                         :rules="[val=>val&&val.length==10 || 'La cédula tiene 10 digitos']" />
-                    <!-- <q-input class="q-ma-xs" filled v-model="scout.phone" label="Telefono"
-                    :rules="[val=>val&&val.length==10 || 'El número de teléfono debe de tener 10 dígitos']" /> -->
-                    <q-input class="q-ma-xs" filled v-model="scout.email" label="Email"   type="email"
-                        :rules="[val=>val&&val.length>0 || 'Este campo no puede estar vacío']"/>
-                    <!-- <q-select class="q-ma-xs" filled :options="bloodType" v-model="scout.typeBlood"
-                        label="Tipo de Sangre">
-                    </q-select> -->
+                    <q-input class="q-ma-xs" filled v-model="scout.email" label="Email" type="email"
+                        :rules="[val=>val&&val.length>0 || 'Este campo no puede estar vacío']" />
+
                     <q-select class="q-ma-xs" emit-value map-options v-model="scout.gender" :options="typeGender"
-                        option-label="name" option-value="id" label="Genero"  :rules="[val=>val|| 'Debes de seleccionar']">
+                        option-label="name" option-value="id" label="Genero"
+                        :rules="[val=>val|| 'Debes de seleccionar']">
                     </q-select>
                     <q-input class="q-ma-xs" filled label="Fecha de Nacimiento" v-model="scout.bornDate" mask="date"
                         :rules="['date']">
@@ -34,7 +31,12 @@
                             </q-icon>
                         </template>
                     </q-input>
-                    <q-btn label="Registrate" style="width: 100%;" type="submit" color="primary" @click="register" />
+                    <div class="q-pa-sm ">
+                        <a class="float-left" style="text-decoration: none; color: green; cursor:pointer" @click="redirectLogin"
+                            >Inicia Sesión</a>
+                    </div>
+                    <q-btn label="Registrate" style="width: 100%;" type="submit" color="primary"
+                        @click="pruebasRegister" />
                 </q-form>
             </div>
         </div>
@@ -61,6 +63,7 @@ import { reactive, ref } from 'vue';
 import ServicesAuth from 'src/services/ServicesAuth';
 import { useRouter } from "vue-router"
 import { useQuasar } from 'quasar'
+import router from 'src/router';
 const $q = useQuasar()
 const route = useRouter()
 const scout = reactive({
@@ -87,32 +90,55 @@ const typeGender = [
         id: 2
     }
 ]
-const bloodType = [
-    '+O',
-    '-O',
-    '+A',
-    '-A',
-    '-B',
-    '+B',
-    '-AB',
-    '+AB'
-]
 
-const validateCode = () => {
+const redirectLogin = () => {
+    route.push('/login')
+}
+const validateCode = () => { //PRODUCCION
     if (codeValidate.value != '') {
         ServicesAuth.validateCode(codeValidate.value)
             .then(response => {
                 if (response.success == true) {
                     ServicesAuth.register(scout)
                         .then(res => {
-                            if (res.success)
-                                route.push('/login')
+                            if (res.success) {
+                                $q.dialog({
+                                    dark: true,
+                                    title: 'Registro completado con éxtio',
+                                    message: 'Redirigiendo...'
+                                })
+                                setTimeout(() => {
+                                    route.push('/login')
+
+                                }, 2000)
+
+                            }
                             else
                                 persistent.value = false
                         })
                 }
             })
     }
+}
+
+const pruebasRegister = () => { // DESARROLLO
+    ServicesAuth.register(scout)
+        .then(res => {
+            if (res.success) {
+                $q.dialog({
+                    dark: true,
+                    title: 'Registro completado con éxtio',
+                    message: 'Redirigiendo...'
+                })
+                setTimeout(() => {
+                    route.push('/login')
+
+                }, 2000)
+            }
+            else {
+                persistent.value = false
+            }
+        })
 }
 const register = () => {
     $q.loading.show()

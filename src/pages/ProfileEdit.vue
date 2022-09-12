@@ -46,7 +46,7 @@
                                     :rules="[val=>val&&val.length>0 || 'Es necesaria la nacionalidad']" />
                                 <q-select class="q-ma-xs" option-label="name" option-value="id" outlined
                                     v-model="profile.gender" label="Género" :options="typeGender" emit-value map-options
-                                    :rules="[val=>val|| 'Seleccion un género']">
+                                    :rules="[val=>val.lenght != 1 && val.lenght != 2 || 'Seleccion un género']">
                                 </q-select>
                                 <q-input class="q-ma-xs" label="Cedula" v-model="profile.dni" outlined
                                     :rules="[val=>val&&val.length==10 || 'La cédula tiene 10 digitos']" />
@@ -56,8 +56,6 @@
 
                             </div>
                         </div>
-                        {{ profile.gender }}
-                        {{ typeGender }}
                         <q-item>
                             <!-- <q-uploader @uploaded="fileComplete" :factory="upload" style="max-width: 300px"
                                 field-name="image" /> -->
@@ -94,16 +92,16 @@ const profile = reactive({
     gender: '',
 })
 const avatar = ref('')
-const typeGender = ref([
+const typeGender = [
     {
+        id: "1",
         name: 'Hombre',
-        id: 1,
     },
     {
+        id: "2",
         name: 'Mujer',
-        id: 2
     }
-])
+]
 const bloodType = [
     '+O',
     '-O',
@@ -133,13 +131,13 @@ const update = () => {
     $q.loading.show()
     ServicesProfile.updateProfile(profile)
         .then(response => {
-            if(response.success == 1){
+            if (response.success == 1) {
                 $q.notify({
                     type: 'positive',
                     message: 'Datos actualizados con éxito',
                     timeout: 2000
                 })
-            }else{
+            } else {
                 $q.notify({
                     type: 'negative',
                     message: response.profile,
@@ -170,7 +168,7 @@ const upload = () => {
 
 const fileComplete = (info) => {
     console.log(info.xhr.response)
-storeUser.avatar = info.xhr.response
+    storeUser.avatar = info.xhr.response
 }
 
 

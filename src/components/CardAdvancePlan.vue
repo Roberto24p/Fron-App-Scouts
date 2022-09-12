@@ -57,7 +57,7 @@ const props = defineProps({
     description: String,
     img_url: String,
     route: Number,
-    state: String
+    state: String,
 })
 const redirectAdvancePlan = () => {
     router.push({ name: 'advancePlanDetails', params: { idAdvancePlan: props.route } })

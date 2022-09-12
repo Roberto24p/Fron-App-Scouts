@@ -25,7 +25,7 @@
       <q-img class="absolute-top" src="https://cdn.quasar.dev/img/material.png" style="height: 150px">
         <div class="absolute-bottom bg-transparent">
           <q-avatar size="56px" class="q-mb-sm">
-            <img :src="storeUser.avatar == '' ? 'https://png.pngtree.com/png-vector/20190116/ourlarge/pngtree-vector-avatar-icon-png-image_322275.jpg' :storeUser.avatar ">
+            <img :src="storeUser.avatar == null || storeUser.avatar == '' ? 'https://png.pngtree.com/png-vector/20190116/ourlarge/pngtree-vector-avatar-icon-png-image_322275.jpg' :storeUser.avatar ">
           </q-avatar>
           <div class="text-weight-bold">{{ storeUser.name }} /  {{ storeUser.nameRole }} </div>
           <div>{{ storeUser.email }}</div>
@@ -149,10 +149,19 @@ const linksList = [
       name: 'user'
     }
   },
+  {
+    title: 'Plan de Adelanto',
+    caption: '@QuasarFramework',
+    icon: 'send',
+    link: {
+      name: 'advancePlan'
+    },
+    roles: [1,2,3],
+    show: true
+  }
 ];
 linksList.forEach(page => {
   const element = page.roles.find(i => i == storeUser.role)
-  console.log(element)
   if (element == undefined)
     page.show = false
 })
@@ -167,7 +176,6 @@ export default defineComponent({
 
   setup() {
     const router = useRouter()
-
     const signOnut = () => {
       storeUser.reset()
       localStorage.removeItem('token')

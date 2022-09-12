@@ -1,11 +1,13 @@
 const ServicesAdvancePlan = {
-    store: async () => {
+    store: async (advancePlan) => {
         const token = localStorage.getItem('token')
         const response = await fetch(`${process.env.BASE_API}/advancePlan`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
-            }
+            },
+            method: 'POST',
+            body: JSON.stringify(advancePlan)
         })
         const data = await response.json()
         return data
@@ -104,8 +106,42 @@ const ServicesAdvancePlan = {
         })
         const data = await response.json()
         return data
-    }
-
+    },
+    // getPercentByScout: async () => {
+    //     const token = localStorage.getItem('token')
+    //     const response = await fetch(`${process.env.BASE_API}/scout/advanceplan/percent/`, {
+    //         headers: {
+    //             'Authorization': `Bearer ${token}`,
+    //             'Content-Type': 'application/json'
+    //         }
+    //     })
+    //     const data = await response.json()
+    //     return data
+    // },
+    // getRecognitionsCompleteByScout: async () => {
+    //     const token = localStorage.getItem('token')
+    //     const response = await fetch(`${process.env.BASE_API}/scout/recognitionscomplete/`, {
+    //         headers: {
+    //             'Authorization': `Bearer ${token}`,
+    //             'Content-Type': 'application/json'
+    //         }
+    //     })
+    //     const data = await response.json()
+    //     return data
+    // },
+    // getRecognitionsWithItemsByScoyt: async () => {
+    //     const token = localStorage.getItem('token')
+    //     const response = await fetch(`${process.env.BASE_API}/scout/recognitionswithitems/`, {
+    //         headers: {
+    //             'Authorization': `Bearer ${token}`,
+    //             'Content-Type': 'application/json'
+    //         }
+    //     })
+    //     const data = await response.json()
+    //     return data
+    // }
 }
+
+
 
 export default ServicesAdvancePlan

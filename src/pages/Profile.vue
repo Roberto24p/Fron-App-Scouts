@@ -7,7 +7,7 @@
             <q-item-section avatar>
               <q-avatar square>
                 <img
-                  :src="store.avatar == '' ? 'https://png.pngtree.com/png-vector/20190116/ourlarge/pngtree-vector-avatar-icon-png-image_322275.jpg' : store.avatar">
+                  :src="store.avatar == null || store.avatar == '' ? 'https://png.pngtree.com/png-vector/20190116/ourlarge/pngtree-vector-avatar-icon-png-image_322275.jpg' : store.avatar">
               </q-avatar>
             </q-item-section>
 
@@ -131,7 +131,7 @@
       </div>
     </div>
   </div>
-  <div class="q-pa-md " v-show="store.role == 4 || store.role == 5">
+  <div class="q-pa-md " v-if="store.role == 4 || store.role == 5">
     <div class="row q-col-gutter-md">
       <div class="col-md-12 col-xs-12">
         <q-card class="my-card  q-py-sm">
@@ -139,7 +139,7 @@
             <q-item-section avatar>
               <q-avatar square>
                 <img
-                  :src="store.avatar == '' ? 'https://png.pngtree.com/png-vector/20190116/ourlarge/pngtree-vector-avatar-icon-png-image_322275.jpg' : store.avatar">
+                  :src="store.avatar == null || store.avatar == '' ? 'https://png.pngtree.com/png-vector/20190116/ourlarge/pngtree-vector-avatar-icon-png-image_322275.jpg' : store.avatar">
               </q-avatar>
             </q-item-section>
 
@@ -165,8 +165,6 @@
     </div>
     <div class="row q-col-gutter-md q-mt-md">
       <div class="col-md-6 col-xs-12">
-
-
         <q-card class="my-card" style="padding: 33px 0px 33px 0px;">
           <q-item>
             <q-item-section avatar>
@@ -191,9 +189,25 @@
           </q-item>
         </q-card>
       </div>
+      <div class="col-md-6 col-xs-12" v-if="store.role == 4">
+        <q-card class="my-card text-center">
+          <q-item class="row justify-center">
+            <q-btn padding="xl" icon="summarize" @click="reportScoutsByGroup" />
+          </q-item>
+          <p>Reporte de Scouts Inscritos</p>
+
+        </q-card>
+      </div>
+      <div class="col-md-12" v-if="store.role == 4">
+        <q-card class="my-card text-center">
+          <q-item class="row justify-center">
+            <pie-chart></pie-chart>
+          </q-item>
+        </q-card>
+      </div>
     </div>
   </div>
-  <div class="q-pa-md " v-show="store.role == 1 || store.role == 2 || store.role == 3">
+  <div class="q-pa-md " v-if="store.role == 1 || store.role == 2 || store.role == 3">
     <div class="row q-col-gutter-md">
       <div class="col-md-12 col-xs-12">
         <q-card class="my-card  q-py-sm">
@@ -201,7 +215,7 @@
             <q-item-section avatar>
               <q-avatar square>
                 <img
-                  :src="store.avatar == '' ? 'https://png.pngtree.com/png-vector/20190116/ourlarge/pngtree-vector-avatar-icon-png-image_322275.jpg' : store.avatar">
+                  :src="store.avatar == null || store.avatar == '' ? 'https://png.pngtree.com/png-vector/20190116/ourlarge/pngtree-vector-avatar-icon-png-image_322275.jpg' : store.avatar">
               </q-avatar>
             </q-item-section>
 
@@ -224,6 +238,23 @@
         </q-card>
 
       </div>
+      <div class="col-md-6 col-xs-12">
+        <q-card class="my-card  q-py-sm">
+
+          <chart class="q-mt-sm"></chart>
+        </q-card>
+
+      </div>
+      <div class="col-md-6 col-xs-12">
+        <q-card class="my-card  q-pt-sm ">
+          <p class="text-center">Dirigentes por grupo</p>
+          <chart-directings-report></chart-directings-report>
+        </q-card>
+        <!-- <q-card class="q-mt-md">
+          <p class="text-center">Dirigentes por grupo</p>
+          <chart-directings-report></chart-directings-report>
+        </q-card> -->
+      </div>
     </div>
 
     <div class="row q-col-gutter-md">
@@ -234,31 +265,21 @@
           </q-item>
         </q-card>
       </div>
-      <div class="col-md-4 col-xs-12 q-mt-md">
-        <q-card class="my-card " style="padding: 33px 0px 33px 0px;">
-          <q-item style="margin-left: 100px;">
+      <div class="col-md-6 col-xs-12 q-mt-md">
+        <q-card class="my-card text-center">
+          <q-item class="row justify-center">
             <q-btn padding="xl" icon="summarize" @click="reporte" />
           </q-item>
-          <p style="margin-left: 115px">Inscripciones</p>
+          <p>Inscripciones</p>
 
         </q-card>
       </div>
-      <div class="col-md-4 col-xs-12 q-mt-md">
-        <q-card class="my-card " style="padding: 33px 0px 33px 0px;">
-          <q-item style="margin-left: 100px;">
-            <q-btn padding="xl" icon="explore" />
+      <div class="col-md-6 col-xs-12 q-mt-md">
+        <q-card class="my-card text-center">
+          <q-item class="row justify-center">
+            <q-btn padding="xl" icon="explore" @click="reportDirectings" />
           </q-item>
-          <p style="margin-left: 130px">Dirigentes</p>
-
-        </q-card>
-      </div>
-      <div class="col-md-4 col-xs-12 q-mt-md">
-        <q-card class="my-card " style="padding: 33px 0px 33px 0px;">
-          <q-item style="margin-left: 100px;">
-            <q-btn padding="xl" icon="summarize" />
-          </q-item>
-          <p style="margin-left: 115px">Inscripciones</p>
-
+          <p>Dirigentes</p>
         </q-card>
       </div>
     </div>
@@ -266,6 +287,9 @@
 </template>
 
 <script setup>
+import Chart from 'src/components/Chart.vue'
+import PieChart from 'src/components/PieChart.vue'
+import ChartDirectingsReport from 'src/components/ChartDirectingsReport.vue'
 import ServicesProfile from 'src/services/ServicesProfile'
 import ServicesInscription from 'src/services/ServicesInscription'
 import ServicesAdvancePlan from 'src/services/ServicesAdvancePlan'
@@ -287,7 +311,8 @@ const profile = reactive({
   type: '',
   grupoScout: '',
   unitScout: '',
-  imgGroup: ''
+  imgGroup: '',
+  scoutId:''
 })
 const percent = ref('')
 const recognitions = ref([])
@@ -300,6 +325,8 @@ if (store.role == 6) {
       console.log(data)
       profile.name = data.user.name
       profile.email = data.user.email
+      if(store.role == 6)
+        profile.scoutId = data.scout.id
       if (data.scout.type == '')
         profile.type = 'NO INSCRITO'
       console.log(data)
@@ -310,10 +337,10 @@ if (store.role == 6) {
       if (store.role == 6) {
         profile.grupoScout = data.data.name
         profile.statusInscription = data.data.state_inscription
-        geRecognitionsComplete(data.data.scout_id)
+        geRecognitionsComplete(profile.scoutId)
 
-        getPercentAdvancePlan(data.data.scout_id)
-        ServicesAdvancePlan.advancePlanDetails(data.data.scout_id)
+        getPercentAdvancePlan(profile.scoutId)
+        ServicesAdvancePlan.advancePlanDetails(profile.scoutId)
           .then(response => {
             recognitions.value = response[0].recognitions
 
@@ -326,10 +353,10 @@ if (store.role == 6) {
 
     })
 
-  const geRecognitionsComplete = (scout_id) => {
+  const geRecognitionsComplete = () => {
     showRecognitions.value = false
     visible.value = true
-    ServicesAdvancePlan.getRecognitionsComplete(scout_id)
+    ServicesAdvancePlan.getRecognitionsComplete(profile.scoutId)
       .then(response => {
         response.recog.forEach(item => {
           recogGets[item.id] = true
@@ -340,8 +367,8 @@ if (store.role == 6) {
         showRecognitions.value = true
       })
   }
-  const getPercentAdvancePlan = (scout_id) => {
-    ServicesAdvancePlan.getPercent(scout_id)
+  const getPercentAdvancePlan = () => {
+    ServicesAdvancePlan.getPercent(profile.scoutId)
       .then(response => {
         percent.value = response
       })
@@ -367,8 +394,21 @@ const reporte = async () => {
 
 const reporteAdvancePlan = async () => {
   $q.loading.show()
-  const response = await ServicesReport.reporteAdvancePlan()
-  $q.loading.hide()    
+  await ServicesReport.reporteAdvancePlan()
+  $q.loading.hide()
+}
+
+const reportDirectings = async () => {
+  $q.loading.show()
+  await ServicesReport.reportDirectingsByGroups()
+  $q.loading.hide()
+}
+
+
+const reportScoutsByGroup = async () => {
+  $q.loading.show()
+  await ServicesReport.reportScoutsInscribedByUnit()
+  $q.loading.hide()
 }
 const redirect = (ruta) => {
 

@@ -91,9 +91,9 @@ const ServicesInscription = {
         return data
     },
 
-    getAllInscriptions: async () => {
+    getAllInscriptions: async (periodId) => {
         const token = localStorage.getItem('token')
-        const response = await fetch(`${process.env.BASE_API}/inscription`, {
+        const response = await fetch(`${process.env.BASE_API}/inscription/${periodId}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
