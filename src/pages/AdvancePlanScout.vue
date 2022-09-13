@@ -7,7 +7,7 @@
                         <q-item>
                             <q-item-section avatar>
                                 <q-avatar square>
-                                    <img src="https://cdn.quasar.dev/img/boy-avatar.png">
+                                    <img :src="profile.avatarScout == '' || profile.avatarScout == null ? 'https://png.pngtree.com/png-vector/20190116/ourlarge/pngtree-vector-avatar-icon-png-image_322275.jpg' : profile.avatarScout">
                                 </q-avatar>
                             </q-item-section>
 
@@ -160,7 +160,8 @@ const router = useRoute()
 
 const profile = reactive({
     name: '',
-    email: ''
+    email: '',
+    avatarScout: ''
 })
 const checks = reactive({})
 const checksModal = ref({})
@@ -181,7 +182,6 @@ const loadAdvancePlan = () => {
                 return 0
             }
             data.topics.forEach(topic => {
-                // console.log(topic)
                 checks[topic.topic_id].check = true
 
             })
@@ -258,6 +258,7 @@ const checkTopic = (topicId) => {
 const getScoutData = () => {
     ServicesScout.getScoutData(router.params.scoutId)
         .then(response => {
+            profile.avatarScout = response.scout.person.image
             profile.name = response.scout.person.name
             profile.email = response.scout.person.user.email
             console.log(response)

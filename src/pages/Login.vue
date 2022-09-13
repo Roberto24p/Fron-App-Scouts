@@ -57,7 +57,7 @@ response.value = await store.access(loginForm)
 console.log(response.value)
     if (response.value.success) {
         setTimeout(() => {
-            router.push('/profile')
+            router.go('/profile')
         }, 1000)
         dialogSuccess.value = true
     } else {

@@ -88,7 +88,7 @@ const linksList = [
       name: 'scout'
     },
     show: true,
-    roles: [1, 5, 4]
+    roles: [ 5, 4]
   },
   {
     title: 'Unidades',

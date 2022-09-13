@@ -35,6 +35,18 @@ const ServicesUser = {
         })
         const data = await response.json()
         return data
+    },
+    delete: async userId => {
+        const token = localStorage.getItem('token')
+        const response = await fetch(`${process.env.BASE_API}/user/delete/${userId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+
+        })
+        const data = await response.json()
+        return data
     }
 }
 

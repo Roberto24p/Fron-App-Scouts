@@ -213,17 +213,17 @@
                 <q-card class="my-card  q-pa-md ">
                     <p class="text-center" style="font-size: 15px;">No olvides subir tus documentos</p>
 
-                    <q-select :options="optionsDocuments" v-model="optionDocument" class="q-mb-sm"
+                    <q-select :options="optionsDocuments" v-model="optionDocument" class="q-mb-sm" 
                         style="max-width: 300px"></q-select>
-                    <q-uploader @uploaded="fileComplete" :factory="factoryPermissions" style="max-width: 300px"
+                    <q-uploader @uploaded="fileComplete" :factory="factoryPermissions" style="max-width: 300px" 
                         field-name="image" v-show="optionDocument == 'Permiso'" :hide-upload-btn="inscriptionExist"
-                        label="Permiso" />
-                    <q-uploader @uploaded="fileComplete" :factory="factoryPay" style="max-width: 300px"
-                        field-name="image" :hide-upload-btn="inscriptionExist" color="amber"
-                        v-show="optionDocument == 'Fotos'" label="Fotos" />
-                    <q-uploader @uploaded="fileComplete" :factory="factoryPay" style="max-width: 300px"
-                        field-name="image" v-show="optionDocument == 'Paga'" :hide-upload-btn="inscriptionExist"
-                        color="amber" label="Pago" />
+                        label="Permiso - Tamaño maximo 2mb" max-file-size="2097152"/>
+                    <q-uploader @uploaded="fileComplete" :factory="factoryPay" style="max-width: 300px" 
+                        field-name="image" :hide-upload-btn="inscriptionExist" color="amber" max-file-size="2097152"
+                        v-show="optionDocument == 'Fotos'" label="Fotos - Tamaño maximo 2mb" />
+                    <q-uploader @uploaded="fileComplete" :factory="factoryPay" style="max-width: 300px" 
+                        field-name="image" v-show="optionDocument == 'Paga'" :hide-upload-btn="inscriptionExist" max-file-size="2097152"
+                        color="amber" label="Pago - Tamaño maximo 2mb" />
 
                 </q-card>
             </div>
@@ -235,24 +235,6 @@
                 <q-btn color="primary" class="col-3" @click="showDialog(profile.imagePhoto)"
                     v-show="profile.imagePhoto">Ver Foto</q-btn>
             </div>
-            <!-- <div class="col-4">
-                <q-card class="my-card  q-pa-sm">
-                    <q-img :src="profile.imagePay" no-native-menu @click="showDialog(profile.imagePay)">
-                        <div class="absolute-top text-center">
-                            Paga
-                        </div>
-                    </q-img>
-                </q-card>
-            </div>
-            <div class="col-4">
-                <q-card class="my-card  q-pa-sm">
-                    <q-img :src="profile.imagePhoto" no-native-menu  @click="showDialog(profile.imagePhoto)">
-                        <div class="absolute-top text-center">
-                            Foto
-                        </div>
-                    </q-img>
-                </q-card>
-            </div> -->
         </div>
     </div>
 </template>
@@ -417,6 +399,23 @@ const getPeriod = () => {
         .then(response => {
             const getYearStart = new Date(response.response.date_start)
             const getYearEnd = new Date(response.response.date_end)
+            const nowDate = new Date()
+            console.log(getYearStart)
+            console.log(nowDate)
+            console.log(getYearEnd)
+            if (getYearStart < nowDate && getYearEnd > nowDate) {
+
+            } else {
+                $q.dialog({
+                    title: '¡No es tiempo de inscripciones!',
+                    message: 'Redirigiendo...',
+                    persistent: true
+
+                })
+                setTimeout(() => {
+                    router.push({ name: 'Profile' })
+                }, 100)
+            }
             console.log(response.response.description)
             period.start = getYearStart.getFullYear()
             period.end = getYearEnd.getFullYear()

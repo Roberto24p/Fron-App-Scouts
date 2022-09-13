@@ -12,6 +12,9 @@
                         <q-item-section>
                             <q-btn color="primary" label="Perfil" flat @click="redirect('/profile')" />
                         </q-item-section>
+                        <q-item-section>
+                            <q-btn color="primary" label="Cambiar contraseña" flat @click="showChangePassword" />
+                        </q-item-section>
                     </q-item>
                 </q-card>
             </div>
@@ -66,18 +69,43 @@
             </div>
         </div>
     </div>
+    <q-dialog v-model="dialogChangePassword">
+        <q-card style="min-width: 350px">
+            <q-card-section>
+                <div class="text-h6">Cambia tu contraseña</div>
+            </q-card-section>
+
+           
+            <q-card-section class="q-pt-none">
+                <q-input dense v-model="passwords.newPassword" type="password" label="Ingresa tu nueva contraseña" />
+            </q-card-section>
+            <q-card-section class="q-pt-none">
+                <q-input dense v-model="passwords.newPasswordConfirm" type="password" label="Confirma tu contraseña" />
+            </q-card-section>
+
+            <q-card-actions align="right" class="text-primary">
+                <q-btn flat label="Actualizar" @click="updatePasswords" />
+            </q-card-actions>
+        </q-card>
+    </q-dialog>
 </template>
 
 <script setup>
 import { reactive, ref, watch } from 'vue';
 import ServicesProfile from 'src/services/ServicesProfile'
+import ServicesAuth from 'src/services/ServicesAuth';
 import { useRouter } from "vue-router"
 import { useUsersStore } from '../store/user-store'
 import { useQuasar } from 'quasar'
 const $q = useQuasar()
 
 const storeUser = useUsersStore()
-
+const dialogChangePassword = ref(false)
+const passwords = reactive({
+    oldPassword: '',
+    newPassword: '',
+    newPasswordConfirm: ''
+})
 const router = useRouter()
 const profile = reactive({
     name: '',
@@ -171,7 +199,27 @@ const fileComplete = (info) => {
     storeUser.avatar = info.xhr.response
 }
 
+const showChangePassword = () => {
+    dialogChangePassword.value = true
+}
 
+const updatePasswords = async () => {
+    const response = await ServicesAuth.changePassword(passwords)
+    if (response.success) {
+        $q.notify({
+            type: 'positive',
+            message: 'Contraseña actualizada correctamente',
+            timeout: 2000
+        })
+    } else {
+        $q.notify({
+            type: 'negative',
+            message: response.message,
+            timeout: 2000
+        })
+    }
+
+}
 </script>
 
 <style scoped>

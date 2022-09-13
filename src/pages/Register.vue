@@ -36,7 +36,7 @@
                             >Inicia Sesión</a>
                     </div>
                     <q-btn label="Registrate" style="width: 100%;" type="submit" color="primary"
-                        @click="pruebasRegister" />
+                        @click="register" />
                 </q-form>
             </div>
         </div>
@@ -63,7 +63,6 @@ import { reactive, ref } from 'vue';
 import ServicesAuth from 'src/services/ServicesAuth';
 import { useRouter } from "vue-router"
 import { useQuasar } from 'quasar'
-import router from 'src/router';
 const $q = useQuasar()
 const route = useRouter()
 const scout = reactive({

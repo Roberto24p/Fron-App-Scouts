@@ -3,8 +3,12 @@ import { ref, reactive, watch } from 'vue'
 import ServicesUser from 'src/services/ServicesUser'
 import ServicesRole from 'src/services/ServicesRole'
 import ServicesGroup from 'src/services/ServicesGroup'
-import ServicesUnit from 'src/services/ServicesUnit';
+import ServicesUnit from 'src/services/ServicesUnit'
+import { useQuasar } from 'quasar'
+import { useUsersStore } from '../store/user-store'
 //Data
+const store = useUsersStore()
+const $q = useQuasar()
 const user = reactive({
     group_id: '',
     name: '',
@@ -19,6 +23,7 @@ const user = reactive({
     password: '',
     id: ''
 })
+const filter = ref('')
 const users = ref([])
 const roles = ref([])
 const groups = ref([])
@@ -68,13 +73,29 @@ const openDialog = () => {
     dialogCreate.value = true
 }
 const save = () => {
+    $q.loading.show()
+    if (user.name == '' || user.last_name == '' || user.dni == '' || user.gender == '' || user.date_born == '' || user.email == '') {
+        $q.loading.hide()
+        $q.dialog({
+            title: 'Alerta',
+            message: 'Completa los datos',
+
+        })
+        return 0;
+    }
     ServicesUser.create(user)
         .then(response => {
             if (response.success) {
+                $q.dialog({
+                    title: 'Información',
+                    message: 'Se enviaron las credenciales al correo electrónico ',
+
+                })
                 loadUsers()
                 dialogCreate.value = false
             }
             console.log(response)
+            $q.loading.hide()
         })
 }
 
@@ -114,7 +135,20 @@ const onEdit = (row) => {
 }
 ServicesRole.all()
     .then(data => {
-        roles.value = data
+        const rolesByRol = []
+        if (store.role == 1) {
+            data.forEach(element => {
+                rolesByRol.push(element)
+            })
+        } else {
+            data.forEach(element => {
+                if (element.id > 2) {
+                    rolesByRol.push(element)
+                }
+            })
+        }
+
+        roles.value = rolesByRol
         console.log(data)
     })
 ServicesGroup.getGroups()
@@ -129,6 +163,20 @@ const onChangeFocus = () => {
         })
 }
 
+const onDelete = (row) => {
+    $q.dialog({
+        title: 'Advertencia',
+        message: '¿Deseas eliminar este usuario?',
+        cancel: true,
+
+    }).onOk(async () => {
+        const response = await ServicesUser.delete(row.id)
+        if(response.success)
+            loadUsers()
+        console.log(response)
+    }).onCancel(() => {
+    })
+}
 watch(() => user.group_id, onChangeFocus)
 
 loadUsers()
@@ -137,7 +185,14 @@ loadUsers()
 <template>
     <div class="q-pa-md">
         <q-btn label="Crear usuario" color="primary" class="q-ma-md" @click="openDialog" />
-        <q-table title="Usuarios" :columns="columns" :rows="users">
+        <q-table title="Usuarios" :columns="columns" :rows="users" :filter="filter">
+            <template v-slot:top-right>
+                <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+                    <template v-slot:append>
+                        <q-icon name="search" />
+                    </template>
+                </q-input>
+            </template>
             <template v-slot:body-cell-actions="props">
                 <q-td :props="props">
                     <q-btn color="yellow" icon="mode_edit" class="q-mx-sm" @click="onEdit(props.row)"></q-btn>
@@ -158,22 +213,38 @@ loadUsers()
             <q-card-section class="col q-pt-none q-mt-sm">
                 <div class="col-6 text-center">
                     <q-form class="q-gutter-md row justify-center q-mt-sm">
-                        <q-input v-model="user.name" class="col-sm-12 col-md-5" label="Nombre" />
-                        <q-input v-model="user.last_name" class="col-sm-12 col-md-5" label="Apellido" />
-                        <q-input v-model="user.email" class="col-sm-12 col-md-5" label="Correo electrónico" />
-                        <q-input v-model="user.dni" class="col-sm-12 col-md-5" label="Dni" />
-                        <q-input v-model="user.date_born" class="col-sm-12 col-md-5" label="Fecha de Nacimiento" />
-                        <q-input v-model="user.phone" class="col-sm-12 col-md-5" label="Teléfono" />
-                        <q-input v-model="user.nacionality" class="col-sm-12 col-md-5" label="Nacionalidad" />
+                        <q-input v-model="user.name" class="col-sm-12 col-md-5" label="Nombre"
+                            :rules="[val=>val&&val.length>0 || 'Este campo no puede estar vacío']" />
+                        <q-input v-model="user.last_name" class="col-sm-12 col-md-5" label="Apellido"
+                            :rules="[val=>val&&val.length>0 || 'Este campo no puede estar vacío']" />
+                        <q-input v-model="user.email" class="col-sm-12 col-md-5" label="Correo electrónico"
+                            :rules="[val=>val&&val.length>0 || 'Este campo no puede estar vacío']" />
+                        <q-input v-model="user.dni" class="col-sm-12 col-md-5" label="Dni"
+                            :rules="[val=>val&&val.length==10 || 'La cédula tiene 10 digitos']" />
+                        <q-input v-model="user.date_born" class="col-sm-12 col-md-5 cursor-pointer"
+                            label="Fecha de Nacimiento" mask="date">
+                            <template v-slot:append>
+                                <q-icon name="event" class="cursor-pointer">
+                                    <q-popup-proxy>
+                                        <q-date v-model="user.date_born"></q-date>
+                                    </q-popup-proxy>
+                                </q-icon>
+                            </template>
+                        </q-input>
+                        <q-input v-model="user.phone" class="col-sm-12 col-md-5" label="Teléfono"
+                            :rules="[val=>val&&val.length>0 || 'Este campo no puede estar vacío']" />
+                        <q-input v-model="user.nacionality" class="col-sm-12 col-md-5" label="Nacionalidad"
+                            :rules="[val=>val&&val.length>0 || 'Este campo no puede estar vacío']" />
                         <q-select v-model="user.gender" option-label="name" :options="gender" emit-value map-options
                             option-value="id" class="col-sm-12 col-md-5" label="Género" />
                         <q-select v-model="user.role" class="col-sm-12 col-md-5" :options="roles"
                             label="Selecciona un rol" option-label="nombre" emit-value map-options option-value="id" />
-                        <q-input v-model="user.password" class="col-sm-12 col-md-5" label="Contraseña" />
-                        <q-select v-show="user.role == 4 || user.role == 5 " v-model="user.group_id" class="col-sm-12 col-md-5" :options="groups"
-                            label="Selecciona un grupo" option-label="name" emit-value map-options option-value="id" />
-                        <q-select v-show="user.group_id != '' " v-model="user.unit_id" class="col-sm-12 col-md-5" :options="units"
-                            label="Selecciona una unidad" option-label="name" emit-value map-options option-value="id" />
+                        <q-select v-show="user.role == 4 || user.role == 5 " v-model="user.group_id"
+                            class="col-sm-12 col-md-5" :options="groups" label="Selecciona un grupo" option-label="name"
+                            emit-value map-options option-value="id" />
+                        <q-select v-show="user.group_id != '' " v-model="user.unit_id" class="col-sm-12 col-md-5"
+                            :options="units" label="Selecciona una unidad" option-label="name" emit-value map-options
+                            option-value="id" />
                         <q-btn class="col-md-10" color="amber" v-show="bttForm" @click="save">Enviar</q-btn>
                         <q-btn class="col-md-10" color="amber" v-show="!bttForm" @click="update">Actualizar</q-btn>
                     </q-form>
@@ -181,4 +252,5 @@ loadUsers()
             </q-card-section>
         </q-card>
     </q-dialog>
+
 </template>

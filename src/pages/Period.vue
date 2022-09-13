@@ -1,7 +1,7 @@
 <template>
     <div class="q-pa-md">
         <q-btn label="Nueva" color="primary" class="q-ma-md" @click="dialog = true; bttForm = true" />
-        <q-table title="Inscripciones" :rows="inscirptionsRow" :columns="columns" row-key="name" :loading="loading">
+        <q-table title="Periodos" :rows="inscirptionsRow" :columns="columns" row-key="name" :loading="loading">
             <template v-slot:body-cell-actions="props">
                 <q-td :props="props">
                     <q-btn color="yellow" icon="mode_edit" class="q-mx-sm" @click="onEdit(props.row)"></q-btn>

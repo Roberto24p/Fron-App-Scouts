@@ -66,7 +66,7 @@ const routes = [
       },
       {
         path: '/teamScouts', component: () => import('pages/TeamScout.vue'), name: 'teamScouts',
-        meta: { auth: true, roles: [1] }
+        meta: { auth: true, roles: [1, 4] }
       },
       {
         path: '/user', component: () => import('pages/User.vue'), name: 'user',

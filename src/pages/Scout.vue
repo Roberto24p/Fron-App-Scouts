@@ -279,7 +279,6 @@ const saveScoutTeam = () => {
 }
 
 const redirect = (row) => {
-    alert(row.id)
     ServicesScout.validateHasTeam(row.id)
         .then(response => {
             if (response.scoutTeam)

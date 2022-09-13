@@ -244,7 +244,7 @@ const deleteGroup = async () => {
 
 function sendData() {
   let validate = false
-  if (Group.name == '' || Group.addres == '' || Group.units == []) {
+  if (Group.name == '' || Group.addres == '' ) {
     validate = true
     $q.notify({
       type: 'negative',
