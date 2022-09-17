@@ -3,22 +3,29 @@
         <div class="row q-col-gutter-md q-mb-md">
             <div class="col-md-12 col-xs-12">
                 <q-card class="my-card q-pa-lg ">
+                    <p style="font-size: 20px;" class="text-left">Busca por nombre, cédula, grupo o
+                        unidad</p>
                     <q-select v-model="periodSelect" :options="periods" option-label="description" option-value="id"
                         emit-value label="Selecciona un periodo" map-options />
                 </q-card>
             </div>
         </div>
-
         <q-table title="Inscripciones" :rows="row" :columns="columns" row-key="name" :filter="filter">
+
             <template v-slot:top-left>
+                <p style="font-size: 20px;">Reporte de inscripciones</p>
+
                 <q-btn color="primary" icon-right="archive" label="Export to csv" no-caps @click="exportTable" />
             </template>
             <template v-slot:top-right>
-                <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+
+                <q-input borderless dense debounce="300" v-model="filter" placeholder="Buscar...">
                     <template v-slot:append>
                         <q-icon name="search" />
                     </template>
                 </q-input>
+
+
             </template>
             <template v-slot:body-cell-state_inscription="props">
                 <q-td :props="props">
@@ -148,7 +155,7 @@ const columns = [
         format: val => `${val}`,
         sortable: true
     },
-    { name: 'dni', align: 'center', label: 'Cédula', field: row => row.dni},
+    { name: 'dni', align: 'center', label: 'Cédula', field: row => row.dni },
     {
         name: 'group', align: 'center', label: 'Grupo', field: row => row.group
     },
@@ -227,7 +234,7 @@ const showDialog = (img) => {
 const getAllPeriods = async () => {
     const response = await ServicesPeriod.all()
     periods.value = response.data
-    if(response.data[0] != null){
+    if (response.data[0] != null) {
         periodSelect.value = response.data[0].id
     }
     console.log(response)

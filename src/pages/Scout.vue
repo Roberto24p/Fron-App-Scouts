@@ -11,7 +11,7 @@
 
                     <q-btn v-if="store.role != 5" color="blue" icon="settings" @click="showModalScoutTeam(props.row)">
                     </q-btn>
-                    <q-btn color="green" icon="task" @click="redirect(props.row)"></q-btn>
+                    <q-btn color="green" icon="task" @click="redirect(props.row)" class="q-ml-sm">Plan de Adelanto</q-btn>
                 </q-td>
             </template>
 

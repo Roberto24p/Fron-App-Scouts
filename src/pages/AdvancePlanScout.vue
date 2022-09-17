@@ -87,7 +87,7 @@
                         <q-item-section>
                             <q-item-label><strong>Plan de Adelanto</strong> </q-item-label>
                             <q-item-label caption>
-                                Manada
+                                
                             </q-item-label>
                         </q-item-section>
                     </q-item>

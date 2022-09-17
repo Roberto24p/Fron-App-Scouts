@@ -117,7 +117,7 @@
                   <q-icon style="font-size: 2em" name="check" color="green" class="q-ml-md"></q-icon>
                 </q-item>
                 <q-item v-else>
-                  <q-icon style="font-size: 2em" name="close" color="red" class="q-ml-md"></q-icon>
+                  <q-icon style="font-size: 2em" name="hourglass_empty" color="warning" class="q-ml-md"></q-icon>
                 </q-item>
               </q-item-section>
 
@@ -250,10 +250,7 @@
           <p class="text-center">Dirigentes por grupo</p>
           <chart-directings-report></chart-directings-report>
         </q-card>
-        <!-- <q-card class="q-mt-md">
-          <p class="text-center">Dirigentes por grupo</p>
-          <chart-directings-report></chart-directings-report>
-        </q-card> -->
+
       </div>
     </div>
 
@@ -265,7 +262,7 @@
           </q-item>
         </q-card>
       </div>
-      <div class="col-md-6 col-xs-12 q-mt-md">
+      <div class="col-md-4 col-xs-12 q-mt-md">
         <q-card class="my-card text-center">
           <q-item class="row justify-center">
             <q-btn padding="xl" icon="summarize" @click="reporte" />
@@ -274,12 +271,20 @@
 
         </q-card>
       </div>
-      <div class="col-md-6 col-xs-12 q-mt-md">
+      <div class="col-md-4 col-xs-12 q-mt-md">
         <q-card class="my-card text-center">
           <q-item class="row justify-center">
             <q-btn padding="xl" icon="explore" @click="reportDirectings" />
           </q-item>
           <p>Dirigentes</p>
+        </q-card>
+      </div>
+      <div class="col-md-4 col-xs-12 q-mt-md">
+        <q-card class="my-card text-center">
+          <q-item class="row justify-center">
+            <q-btn padding="xl" icon="explore" @click="reportDirectingsDetails" />
+          </q-item>
+          <p>Dirigentes por grupo</p>
         </q-card>
       </div>
     </div>
@@ -312,7 +317,7 @@ const profile = reactive({
   grupoScout: '',
   unitScout: '',
   imgGroup: '',
-  scoutId:''
+  scoutId: ''
 })
 const percent = ref('')
 const recognitions = ref([])
@@ -325,7 +330,7 @@ if (store.role == 6) {
       console.log(data)
       profile.name = data.user.name
       profile.email = data.user.email
-      if(store.role == 6)
+      if (store.role == 6)
         profile.scoutId = data.scout.id
       if (data.scout.type == '')
         profile.type = 'NO INSCRITO'
@@ -410,6 +415,13 @@ const reportScoutsByGroup = async () => {
   await ServicesReport.reportScoutsInscribedByUnit()
   $q.loading.hide()
 }
+
+const reportDirectingsDetails = async () => {
+  $q.loading.show()
+  await ServicesReport.reportDirectingsDetails()
+  $q.loading.hide()
+}
+
 const redirect = (ruta) => {
 
   router.push(ruta)
