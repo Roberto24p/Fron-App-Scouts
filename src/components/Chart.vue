@@ -58,7 +58,7 @@ export default {
                         enabled: false,
                     },
                     labels: {
-                        show: false
+                        show: true
                     }, 
 
                     
