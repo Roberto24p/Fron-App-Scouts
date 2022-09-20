@@ -1,6 +1,6 @@
 <template>
     <div class="q-pa-md">
-        <q-btn label="Nueva" color="primary" class="q-ma-md" @click="dialog = true; bttForm = true" />
+        <q-btn label="Nuevo Periodo" color="primary" class="q-ma-md" @click="dialog = true; bttForm = true" />
         <q-table title="Periodos" :rows="inscirptionsRow" :columns="columns" row-key="name" :loading="loading">
             <template v-slot:body-cell-actions="props">
                 <q-td :props="props">
@@ -28,7 +28,7 @@
             </q-bar>
 
             <q-card-section>
-                <div class="text-h6">Nueva Inscripcion</div>
+                <div class="text-h6">Nuevo periodo</div>
             </q-card-section>
 
             <q-card-section class="col q-pt-none">
@@ -57,7 +57,6 @@
                         </q-input>
                         <q-input class="col-8 q-ml-lg" v-model="inscription.description" filled label="Descripción">
                         </q-input>
-                        {{ inscription }}
                     </div>
                 </q-form>
             </q-card-section>

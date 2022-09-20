@@ -156,7 +156,27 @@ const linksList = [
     link: {
       name: 'advancePlan'
     },
+    roles: [1,2],
+    show: true
+  },
+  {
+    title: 'Reportes',
+    caption: '@QuasarFramework',
+    icon: 'assignment',
+    link: {
+      name: 'Reports'
+    },
     roles: [1,2,3],
+    show: true
+  },
+  {
+    title: 'Inscripción',
+    caption: '@QuasarFramework',
+    icon: 'assignment',
+    link: {
+      name: 'InscriptionScout'
+    },
+    roles: [6],
     show: true
   }
 ];

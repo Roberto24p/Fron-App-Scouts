@@ -83,6 +83,10 @@ const routes = [
       {
         path: '/reports/periods', component: () => import('pages/reports/inscriptionsReports.vue'), name: 'ReportPeriods',
         meta: {auth: true, roles: [1, 2, 3]}
+      },
+      {
+        path: '/report', component: () => import('pages/Report.vue'), name: 'Reports',
+        meta: {auth: true, roles: [1, 2, 3]}
       }
 
     ]
