@@ -16,7 +16,7 @@
             </template>
         </q-table>
     </div>
-  
+
     <q-dialog v-model="dialog" transition-show="slide-up" transition-hide="slide-down">
         <q-card style="width: 700px; max-width: 80vw;">
             <q-bar class="bg-warning q-pa-lg">
@@ -55,8 +55,11 @@
                                 </q-icon>
                             </template>
                         </q-input>
-                        <q-input class="col-8 q-ml-lg" v-model="inscription.description" filled label="Descripción">
+                        <q-input class="col-4 q-ml-lg" v-model="inscription.description" filled label="Descripción">
                         </q-input>
+                        <q-input class="col-4 q-ml-lg" v-model="inscription.price" filled label="Precio $" type="number" >
+                        </q-input>
+
                     </div>
                 </q-form>
             </q-card-section>
@@ -113,7 +116,8 @@ const inscription = reactive({
     dateStart: '',
     dateEnd: '',
     description: '',
-    id: ''
+    id: '',
+    price: ''
 })
 
 const postInscription = async () => {
@@ -127,6 +131,7 @@ const onEdit = (row) => {
     inscription.dateEnd = row.date_end
     inscription.dateStart = row.date_start
     inscription.description = row.description
+    inscription.price = row.price
     inscription.id = row.id
     bttForm.value = false
 
@@ -146,13 +151,13 @@ const getInscriptions = () => {
 }
 
 const onActivate = (row) => {
-    inscription.id =  row.id
+    inscription.id = row.id
     small.value = true
 }
 
 const activate = async () => {
     const response = await ServicesPeriod.activate(inscription.id)
-    if(response.success){
+    if (response.success) {
         getInscriptions()
     }
 

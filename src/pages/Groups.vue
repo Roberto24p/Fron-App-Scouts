@@ -6,7 +6,7 @@
         <q-td :props="props">
           <q-btn color="yellow" icon="mode_edit" class="q-mx-sm" @click="onEdit(props.row)"></q-btn>
           <q-btn color="red" icon="delete" @click="onDelete(props.row)" v-show="props.row.state=='A'"></q-btn>
-          <q-btn  color="green" icon="add" @click="activate(props.row)" v-show="props.row.state!='A'"></q-btn>
+          <q-btn color="green" icon="add" @click="activate(props.row)" v-show="props.row.state!='A'"></q-btn>
         </q-td>
       </template>
       <template v-slot:body-cell-img="props">
@@ -39,7 +39,7 @@
       </q-card-actions>
     </q-card>
   </q-dialog>
-  <q-dialog v-model="dialog"  transition-show="slide-up" transition-hide="slide-down">
+  <q-dialog v-model="dialog" transition-show="slide-up" transition-hide="slide-down">
     <q-card style="width: 900px; max-width: 80vw;">
       <q-bar>
         <q-toolbar-title>Nuevo Grupo</q-toolbar-title>
@@ -48,7 +48,7 @@
           <q-tooltip class="bg-white text-primary">Close</q-tooltip>
         </q-btn>
       </q-bar>
-    
+
 
       <q-card-section class="col q-pt-none q-mt-sm">
         <div class="col-6 text-center ">
@@ -96,7 +96,7 @@
 
       <q-card-actions align="right" class="bg-white text-teal">
         <q-btn flat label="Actualizar" v-on:click="updateData" v-show="!bttForm" />
-            <q-btn flat label="Guardar" v-on:click="sendData" v-show="bttForm" />
+        <q-btn flat label="Guardar" v-on:click="sendData" v-show="bttForm" />
 
       </q-card-actions>
     </q-card>
@@ -165,7 +165,7 @@ const activate = (row) => {
   ServicesGroup.activateGroup(row.id)
     .then(response => {
       console.log(response)
-      if(response.success == 1){
+      if (response.success == 1) {
         getGroups()
       }
     })
@@ -235,15 +235,30 @@ async function onDelete(data) {
 }
 
 const deleteGroup = async () => {
-  const message = await ServicesGroup.delete(Group.id)
-  console.log(message)
-  getGroups()
+  const response = await ServicesGroup.delete(Group.id)
+  console.log(response)
+  if (response.success) {
+    getGroups()
+    $q.notify({
+      type: 'success',
+      message: response.message,
+      timeout: 2000
+    })
+
+  }else{
+    $q.notify({
+      type: 'negative',
+      message: response.message,
+      timeout: 2000
+    })
+  }
   Group.id = ''
+
 }
 
 function sendData() {
   let validate = false
-  if (Group.name == '' || Group.addres == '' ) {
+  if (Group.name == '' || Group.addres == '') {
     validate = true
     $q.notify({
       type: 'negative',

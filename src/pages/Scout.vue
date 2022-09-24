@@ -4,10 +4,10 @@
         <q-table title="Beneficiarios Scouts" :rows="rowScouts" :columns="columns" row-key="name">
             <template v-slot:body-cell-actions="props">
                 <q-td :props="props">
-                    <q-btn v-if="store.role != 5" color="yellow" icon="mode_edit" class="q-mx-sm"
-                        @click="onEdit(props.row)"></q-btn>
-                    <q-btn v-if="store.role != 5" color="red" icon="delete" class="q-mx-sm"
-                        @click="onDelete(props.row)"></q-btn>
+                    <!-- <q-btn v-if="store.role != 5 || store.role != 4" color="yellow" icon="mode_edit" class="q-mx-sm"
+                        @click="onEdit(props.row)"></q-btn> -->
+                    <!-- <q-btn v-if="store.role != 5" color="red" icon="delete" class="q-mx-sm"
+                        @click="onDelete(props.row)"></q-btn> -->
 
                     <q-btn v-if="store.role != 5" color="blue" icon="settings" @click="showModalScoutTeam(props.row)">
                     </q-btn>

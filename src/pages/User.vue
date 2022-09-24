@@ -219,7 +219,7 @@ loadUsers()
                             :rules="[val=>val&&val.length>0 || 'Este campo no puede estar vacío']" />
                         <q-input v-model="user.email" class="col-sm-12 col-md-5" label="Correo electrónico"
                             :rules="[val=>val&&val.length>0 || 'Este campo no puede estar vacío']" />
-                        <q-input v-model="user.dni" class="col-sm-12 col-md-5" label="Dni"
+                        <q-input v-model="user.dni" class="col-sm-12 col-md-5" label="Dni" mask="##########"
                             :rules="[val=>val&&val.length==10 || 'La cédula tiene 10 digitos']" />
                         <q-input v-model="user.date_born" class="col-sm-12 col-md-5 cursor-pointer"
                             label="Fecha de Nacimiento" mask="date">

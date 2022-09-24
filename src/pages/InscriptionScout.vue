@@ -211,7 +211,7 @@
             </div>
             <div class="col-4" :class="{hidden: inscriptionExist}">
                 <q-card class="my-card  q-pa-md ">
-                    <p class="text-center" style="font-size: 15px;">No olvides subir tus documentos</p>
+                    <p class="text-center" style="font-size: 15px;">No olvides subir tus imagenes</p>
 
                     <q-select :options="optionsDocuments" v-model="optionDocument" class="q-mb-sm" 
                         style="max-width: 300px"></q-select>

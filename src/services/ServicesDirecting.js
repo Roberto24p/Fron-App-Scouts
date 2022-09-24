@@ -51,13 +51,13 @@ const ServicesDirecting = {
     getProfileDirecting: async () => {
         const token = localStorage.getItem('token')
 
-        const response = await fetch(`${process.env.BASE_API}/directingprofile/`, {
+        const response = await fetch(`${process.env.BASE_API}/directingprofile`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
         })
-        const data = await  response.json()
+        const data = await response.json()
         return data
     },
     deleteDirecting: async (directingId) => {
@@ -74,7 +74,19 @@ const ServicesDirecting = {
     },
     activateDirecting: async (directingId) => {
         const token = localStorage.getItem('token')
-        const response = await fetch(`${process.env.BASE_API}/directing/activate/${directingId}`,{
+        const response = await fetch(`${process.env.BASE_API}/directing/activate/${directingId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            method: 'GET'
+        })
+        const data = await response.json()
+        return data
+    },
+    getDirectingsByUnit: async (unitId) => {
+        const token = localStorage.getItem('token')
+        const response = await fetch(`${process.env.BASE_API}/directings/unit/${unitId}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'

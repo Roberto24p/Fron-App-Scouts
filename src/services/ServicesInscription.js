@@ -5,7 +5,8 @@ const ServicesInscription = {
         const jsonInscription = {
             description: inscription.description,
             date_start: inscription.dateStart,
-            date_end: inscription.dateEnd
+            date_end: inscription.dateEnd,
+            price: inscription.price
         }
         const response = await fetch(`${process.env.BASE_API}/period`,
             {
@@ -38,7 +39,8 @@ const ServicesInscription = {
         const jsonInscription = {
             description: inscription.description,
             date_start: inscription.dateStart,
-            date_end: inscription.dateEnd
+            date_end: inscription.dateEnd,
+            price: inscription.price
         }
         const response = await fetch(`${process.env.BASE_API}/period/${id}`,
             {

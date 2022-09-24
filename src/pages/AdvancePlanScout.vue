@@ -7,7 +7,8 @@
                         <q-item>
                             <q-item-section avatar>
                                 <q-avatar square>
-                                    <img :src="profile.avatarScout == '' || profile.avatarScout == null ? 'https://png.pngtree.com/png-vector/20190116/ourlarge/pngtree-vector-avatar-icon-png-image_322275.jpg' : profile.avatarScout">
+                                    <img
+                                        :src="profile.avatarScout == '' || profile.avatarScout == null ? 'https://png.pngtree.com/png-vector/20190116/ourlarge/pngtree-vector-avatar-icon-png-image_322275.jpg' : profile.avatarScout">
                                 </q-avatar>
                             </q-item-section>
 
@@ -87,7 +88,7 @@
                         <q-item-section>
                             <q-item-label><strong>Plan de Adelanto</strong> </q-item-label>
                             <q-item-label caption>
-                                
+
                             </q-item-label>
                         </q-item-section>
                     </q-item>
@@ -106,14 +107,14 @@
                                     <div class="q-pa-none" style="max-width: 350px">
                                         <q-list dense bordered class="rounded-borders">
                                             <q-item tag="label" v-for="topic in recognition.topics"
-                                                v-bind:key="topic.id" class="q-mb-none">
-                                                <q-item-section side top>
+                                                v-bind:key="topic.id" class="q-mb-none" >
+                                                <q-item-section side top >
                                                     <q-checkbox v-model="checks[topic.id].check"
                                                         v-if="!checks[topic.id].check || checksModal[topic.id] == topic.id"
+                                                        :disable="checks[topic.id].disable"
                                                         @click="checkTopic(topic.id)" />
                                                     <q-icon style="font-size: 2.5em" name="tasks" color="green" v-else
                                                         class="q-ml-md"></q-icon>
-
                                                 </q-item-section>
                                                 <q-item-section>
                                                     <q-item-label>{{ topic.name }}</q-item-label>
@@ -130,7 +131,6 @@
             </div>
         </div>
     </div>
-
     <q-dialog v-model="alertDialog">
         <q-card>
             <q-card-section>
@@ -155,6 +155,7 @@ import ServicesScout from 'src/services/ServicesScout'
 import { useRoute } from "vue-router"
 import { useQuasar } from 'quasar'
 const $q = useQuasar()
+const auxRecognition = ref(false)
 //DATA
 const router = useRoute()
 
@@ -183,26 +184,10 @@ const loadAdvancePlan = () => {
             }
             data.topics.forEach(topic => {
                 checks[topic.topic_id].check = true
-
             })
         })
 }
-ServicesAdvancePlan.advancePlanDetails(router.params.scoutId)
-    .then(data => {
-        data[0].recognitions.forEach(info => {
-            info.topics.forEach(items => {
-                const topic = {
-                    id: items.id,
-                    name: items.name,
-                    check: false
-                }
-                checks[items.id] = topic
-            })
-        })
-        advancePlan.value = data[0].recognitions
-        tab.value = advancePlan.value[0].name
 
-    })
 const alertModal = () => {
     alertDialog.value = true
 }
@@ -246,9 +231,8 @@ const updateAdvancePlan = () => {
 const checkTopic = (topicId) => {
     console.log(topicId)
     const index = topicsCheckArray.findIndex(element => element == topicId)
-    if (index == -1) {
+    if (index == -1 && checks[topicId].disable == false ) {
         checksModal.value[topicId] = topicId
-
         topicsCheckArray.push(topicId)
     } else {
         topicsCheckArray.splice(index, 1)
@@ -277,12 +261,47 @@ const getRecognitionsComplete = () => {
         .then(response => {
             if (response.success == 1) {
                 recogComplete.value = response.recog
+                response.recogIncump.forEach((item, index) => {
+                    if (index == 0) {
+                        item.topics.forEach(i => {
+                            checks[i.id].disable = false
+                        })
+                    }
+                })
             }
         })
 }
-getRecognitionsComplete()
+
+const getAdvancePlanDetails = () => {
+    ServicesAdvancePlan.advancePlanDetails(router.params.scoutId)
+        .then(data => {
+            const aux = [];
+            data[0].recognitions.forEach((info, index) => {
+
+                info.topics.forEach(items => {
+                    const topic = {
+                        id: items.id,
+                        name: items.name,
+                        check: false,
+                        disable: true
+                    }
+                    checks[items.id] = topic
+                })
+
+
+                console.log(info.topics.length)
+            })
+
+            advancePlan.value = data[0].recognitions
+            tab.value = advancePlan.value[0].name
+
+        })
+}
 getPercentAdvancePlan()
 getScoutData()
+getAdvancePlanDetails()
+getRecognitionsComplete()
+
 // const loadTeams = () => {
 //     ServicesUnit.getByScout(1)
 //         .then(response => {

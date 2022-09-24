@@ -133,8 +133,6 @@ const saveTeam = () => {
                 getTeams()
                 dialog.value = false
             }
-
-
         })
 }
 const openDialogCreate = () => {
@@ -179,16 +177,11 @@ const getTeams = () => {
                 console.log(response)
                 $q.loading.hide()
             })
-    }else if(store.role == 5 || store.role == 4 ){
-        ServicesTeam.teamsDirecting()
-            .then(response => {
-                group.value = response.unit.group.id
-                team.unitId = response.unit.id
-                teams.value = response.teams
-                console.log(response)
-                $q.loading.hide()
+    } else if (store.role == 4) {
+        getTeamDirectingGroup()
 
-            })
+    } else if (store.role == 5) {
+        getTeamDirecting()
     }
 }
 
@@ -210,7 +203,30 @@ const updateTeam = () => {
 }
 watch(() => group.value, onChangeFocus)
 
+const getTeamDirecting = () => {
+    ServicesTeam.teamsDirecting()
+        .then(response => {
+            group.value = response.unit.group.id
+            team.unitId = response.unit.id
+            teams.value = response.teams
+            console.log(response)
+            $q.loading.hide()
+
+        })
+}
+
+const getTeamDirectingGroup = () => {
+    ServicesTeam.teamsDirectingGroup()
+        .then(response => {
+            group.value = response.group
+            teams.value = response.teams
+            console.log(response)
+            $q.loading.hide()
+
+        })
+}
 getTeams()
 </script>
 <style >
+
 </style>

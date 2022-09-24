@@ -1,12 +1,21 @@
 <template>
     <div class="q-pa-md">
         <q-btn label="Agregar" color="primary" class="q-ma-md" @click="showDialog"></q-btn>
-        <q-table title="Unidades Scouts" :rows="rowUnits" :columns="columns" row-key="name">
+        <q-table title="Unidades Scouts" :rows="rowUnits" :columns="columns" row-key="name" :filter="filter">
+            <template v-slot:top-right>
+                <q-input borderless dense debounce="300" v-model="filter" placeholder="Buscar...">
+                    <template v-slot:append>
+                        <q-icon name="search" />
+                    </template>
+                </q-input>
+            </template>
             <template v-slot:body-cell-actions="props">
                 <q-td :props="props">
+                    <q-btn color="blue" icon="info" @click="showDetailUnitDirecting(props.row)"></q-btn>
                     <q-btn color="yellow" icon="mode_edit" class="q-mx-sm" @click="onEdit(props.row)"></q-btn>
                     <!-- <q-btn color="blue" icon="group" class="q-mx-sm" @click="redirect(props.row.id)"></q-btn> -->
-                    <q-btn color="red" icon="delete" @click="onDelete(props.row)" v-show="props.row.state == 'A'"></q-btn>
+                    <q-btn color="red" icon="delete" @click="onDelete(props.row)" v-show="props.row.state == 'A'">
+                    </q-btn>
                     <q-btn color="green" icon="add" @click="activate(props.row)" v-show="props.row.state != 'A'">
                     </q-btn>
 
@@ -55,15 +64,17 @@
                     <div class="col-md-5 col-sm-12 ">
                         <q-input class="col-12" filled v-model="unit.name" label="Nombre"></q-input>
                         <q-select class="col-12 q-mt-sm" filled emit-value map-options v-model="unit.groupId"
-                            :options="groupsSelect" option-value="id" option-label="name" label="Selecciona un Grupo" />
-                        <q-select filled class="q-mt-sm" v-model="unit.type" :options="unitsSelect" />
+                            :disable="store.role == 4" :options="groupsSelect" option-value="id" option-label="name"
+                            label="Selecciona un Grupo" />
+                        <q-select filled class="q-mt-sm" option-value="name" v-model="unit.type" :options="unitsSelect"
+                            emit-value map-options option-label="name" />
                         <q-uploader class="q-mt-sm" :max-files="1" @finish="fileUpload" @uploaded="fileComplete"
                             :factory="factory" style="max-width: 300px" field-name="image" color="amber" label="Logo" />
                         <q-btn class="q-mt-sm" @click="addTeam" v-show="bttForm">Agregar Equipo</q-btn>
                     </div>
                     <div class="col-md-4 col-sm-12" v-show="bttForm">
                         <q-img :src="unit.img_url == '' ? 'https://i.imgur.com/wKV0Jmy.png' : unit.img_url"
-                        spinner-color="white" style="height: 140px; max-width: 150px; border: yellow 5px solid;" />
+                            spinner-color="white" style="height: 140px; max-width: 150px; border: yellow 5px solid;" />
                         <div v-for="team in unit.teams" v-bind:key="team.id" class="row">
                             <q-input class="col-12" filled v-model="team.name" label="Equipo">
                                 <template v-slot:append>
@@ -78,9 +89,43 @@
                 <q-btn flat label="Guardar" @click="postUnit" v-show="bttForm"></q-btn>
                 <q-btn flat label="Actualizar" @click="updateUnit" v-show="!bttForm"></q-btn>
             </q-card-actions>
-            {{  scout  }}
+            {{ scout }}
         </q-card>
     </q-dialog>
+    <q-dialog v-model="modalDetailDirecting">
+        <q-card style="width: 700px; max-width: 80vw;">
+            <q-card-section>
+                <div class="text-h6">Dirigentes de la Unidad</div>
+            </q-card-section>
+
+            <q-card-section class="q-pt-none">
+                <q-list bordered v-if="directings.length>0">
+                    <q-item clickable v-for="direct in directings" v-bind:key="direct.id">
+                        <q-item-section avatar>
+                            <q-avatar>
+                                <q-img
+                                    :src="direct.person.image == '' || direct.person.image == null ? 'https://png.pngtree.com/png-vector/20190116/ourlarge/pngtree-vector-avatar-icon-png-image_322275.jpg': direct.profile.image">
+                                </q-img>
+                            </q-avatar>
+                        </q-item-section>
+
+                        <q-item-section>{{ direct.person.name }} {{ direct.person.last_name }} </q-item-section>
+                        <q-item-section>{{ direct.person.user.roles[0].nombre }}</q-item-section>
+                    </q-item>
+                </q-list>
+                <q-list bordered v-else>
+                    <q-item-section>
+                        No hay dirigentes en esta unidad
+                    </q-item-section>
+                </q-list>
+            </q-card-section>
+
+            <q-card-actions align="right" class="bg-white text-teal">
+                <q-btn flat label="OK" v-close-popup />
+            </q-card-actions>
+        </q-card>
+    </q-dialog>
+
 
 </template>
 
@@ -91,12 +136,13 @@ import { onBeforeMount, reactive, ref } from 'vue';
 import { useRouter } from "vue-router"
 import { useUsersStore } from '../store/user-store'
 import { useQuasar } from 'quasar'
+import ServicesRange from 'src/services/ServicesRange';
+import ServicesDirecting from 'src/services/ServicesDirecting';
 const $q = useQuasar()
 const store = useUsersStore()
 const router = useRouter()
-
 const deleteDialog = ref(false)
-
+const modalDetailDirecting = ref(false)
 const columns = [
     { name: 'img', label: 'Logo' },
 
@@ -116,12 +162,14 @@ const rowUnits = ref([])
 const groupsSelect = ref([])
 const dialog = ref(false)
 const bttForm = ref(false)
-
-const unitsSelect = [
-    'Manada',
-    'Tropa',
-    'Clan'
-]
+const filter = ref('')
+const directings = ref([])
+// const unitsSelect = [
+//     'Manada',
+//     'Tropa',
+//     'Clan'
+// ]
+const unitsSelect = ref([])
 const unit = reactive({
     id: '',
     name: '',
@@ -138,8 +186,22 @@ const onDelete = (row) => {
 const deleteUnit = () => {
     ServicesUnit.delete(unit.id)
         .then(response => {
-            console.log(response)
-            getUnits()
+            if (response.success == 1) {
+                $q.notify({
+                    type: 'success',
+                    message: response.message,
+                    timeout: 2000
+                })
+                console.log(response)
+                getUnits()
+            } else {
+                $q.notify({
+                    type: 'negative',
+                    message: response.message,
+                    timeout: 2000
+                })
+            }
+
         })
 }
 
@@ -168,6 +230,12 @@ const postUnit = async () => {
 const getGroups = async () => {
     const groupsFech = await ServicesGroup.getGroups()
     groupsSelect.value = groupsFech
+    if (store.role == 4) {
+        const response = await ServicesDirecting.getProfileDirecting()
+        unit.groupId = response.profile.group_id
+        console.log(unit)
+        console.log(response)
+    }
 }
 
 const getUnits = async () => {
@@ -180,7 +248,7 @@ const getUnits = async () => {
         unitsFetch = await ServicesUnit.getUnitsDirecting()
 
     }
-$q.loading.hide()
+    $q.loading.hide()
     rowUnits.value = unitsFetch
 }
 
@@ -219,9 +287,10 @@ const showDialog = () => {
     bttForm.value = true
     unit.name = ''
     unit.type = ''
-    unit.groupId = ''
     unit.img_url = ''
     unit.teams = []
+    if (store.role != 4)
+        unit.groupId = ''
 }
 
 const updateUnit = () => {
@@ -253,7 +322,24 @@ const activate = (row) => {
 const redirect = (unit_id) => {
     router.push({ name: 'teamScouts', params: { unitId: unit_id } })
 }
+
+const showDetailUnitDirecting = async (row) => {
+    console.log(row)
+    modalDetailDirecting.value = true
+    const response = await ServicesDirecting.getDirectingsByUnit(row.id)
+    directings.value = response.directings
+    console.log(response)
+}
+
+const getRanges = async () => {
+    const response = await ServicesRange.showAll()
+    unitsSelect.value = response.ranges
+    console.log(response)
+}
+
+
 onBeforeMount(() => {
+    getRanges()
     getGroups()
     getUnits()
 })
