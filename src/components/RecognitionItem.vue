@@ -1,6 +1,6 @@
 <template>
     <q-item-label>
-        {{ item }}
+        - {{ item }}
     </q-item-label>
 </template>
 <script setup>

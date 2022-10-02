@@ -36,8 +36,8 @@
         </q-item>
       </q-card>
     </div>
-    <q-btn class="q-mt-sm center" color="white" text-color="black" label="Guardar" @click="bttUpdate" />
-    <q-btn color="primary" @click="addRecognition" style="position: fixed; bottom:50px;">
+    <q-btn class="q-mt-sm center" color="green" text-color="black" label="Guardar" @click="bttUpdate" style="position: fixed; bottom:50px;right:100px;" />
+    <q-btn color="primary" @click="addRecognition" style="position: fixed; bottom:50px;right: 300px">
       Agregar Reconocimiento
     </q-btn>
   </div>
@@ -113,7 +113,7 @@ const bttUpdate = async () => {
   if (response.success) {
     $q.notify({
       type: 'positive',
-      message: 'Plan de Adelanto actualziado correctamente'
+      message: 'Plan de Adelanto actualizado correctamente'
     })
     getAdvancePlan()
   } else {

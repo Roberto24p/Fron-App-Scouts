@@ -275,7 +275,6 @@ const getRecognitionsComplete = () => {
 const getAdvancePlanDetails = () => {
     ServicesAdvancePlan.advancePlanDetails(router.params.scoutId)
         .then(data => {
-            const aux = [];
             data[0].recognitions.forEach((info, index) => {
 
                 info.topics.forEach(items => {
@@ -287,20 +286,22 @@ const getAdvancePlanDetails = () => {
                     }
                     checks[items.id] = topic
                 })
-
+                loadAdvancePlan()
 
                 console.log(info.topics.length)
             })
 
             advancePlan.value = data[0].recognitions
             tab.value = advancePlan.value[0].name
-
         })
 }
 getPercentAdvancePlan()
 getScoutData()
 getAdvancePlanDetails()
 getRecognitionsComplete()
+
+
+
 
 // const loadTeams = () => {
 //     ServicesUnit.getByScout(1)
@@ -314,5 +315,4 @@ getRecognitionsComplete()
 //             console.log(response)
 //         })
 // }
-loadAdvancePlan()
 </script>

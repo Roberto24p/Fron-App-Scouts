@@ -8,7 +8,7 @@
                     <q-btn color="yellow" icon="mode_edit" class="q-mx-sm" @click="onEdit(props.row)"></q-btn>
                     <q-btn color="red" icon="delete" @click="onDelete(props.row)" v-show="props.row.state == 'A'">
                     </q-btn>
-                    <q-btn color="green" icon="add" @click="activate(props.row)" v-show="props.row.state!='A'"></q-btn>
+                    <q-btn color="green" @click="activate(props.row)" v-show="props.row.state!='A'">Activar</q-btn>
                 </q-td>
             </template>
             <template v-slot:body-cell-img="props">
