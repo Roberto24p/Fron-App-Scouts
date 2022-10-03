@@ -95,7 +95,36 @@ const ServicesDirecting = {
         })
         const data = await response.json()
         return data
-    }
+    },
+    setUnitDirecting: async (unitId, directingId) => {
+        const bodyData = {
+            "unitId": unitId,
+            "directingId": directingId
+        }
+        const token = localStorage.getItem('token')
+        const response = await fetch(`${process.env.BASE_API}/directing/unit`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(bodyData),
+            method: 'POST'
+        })
+        const data = await response.json()
+        return data
+    },
+    showDirectingsByGroup: async (groupId) => {
+        const token = localStorage.getItem('token')
+        const response = await fetch(`${process.env.BASE_API}/directings/group/${groupId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            method: 'GET'
+        })
+        const data = await response.json()
+        return data
+    },
 }
 
 export default ServicesDirecting

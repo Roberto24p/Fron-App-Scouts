@@ -7,7 +7,7 @@
             <q-item-section avatar>
               <q-avatar square>
                 <img
-                  :src="store.avatar == null || store.avatar == '' ? 'https://png.pngtree.com/png-vector/20190116/ourlarge/pngtree-vector-avatar-icon-png-image_322275.jpg' : store.avatar">
+                  :src="store.avatar == null || store.avatar == '' ? env+'/img/avatar.0ebc89a2.jpg' : store.avatar">
               </q-avatar>
             </q-item-section>
 
@@ -261,8 +261,6 @@ import Chart from 'src/components/Chart.vue'
 import PieChart from 'src/components/PieChart.vue'
 import ChartDirectingsReport from 'src/components/ChartDirectingsReport.vue'
 import ServicesProfile from 'src/services/ServicesProfile'
-import ServicesInscription from 'src/services/ServicesInscription'
-import ServicesAdvancePlan from 'src/services/ServicesAdvancePlan'
 import ServicesReport from 'src/services/ServicesReport'
 import { reactive, ref } from "vue"
 import { useRouter } from "vue-router"
@@ -287,63 +285,26 @@ const profile = reactive({
 const percent = ref('')
 const recognitions = ref([])
 const recogGets = reactive({})
+const env = process.env.APP_HOST
 if (store.role == 6) {
-  ServicesProfile.getProfile()
-    .then(data => {
-      $q.loading.hide()
 
-      console.log(data)
-      profile.name = data.user.name
-      profile.email = data.user.email
-      if (store.role == 6)
-        profile.scoutId = data.scout.id
-      if (data.scout.type == '')
+  ServicesProfile.profilePage()
+    .then(response => {
+      console.log(response)
+      profile.name = response.profile.user.name
+      profile.email = response.profile.user.email
+      if (response.profile.scout.type == '')
         profile.type = 'NO INSCRITO'
-      console.log(data)
-    })
-
-  ServicesInscription.getStatusInscription()
-    .then(data => {
-      if (store.role == 6) {
-        profile.grupoScout = data.data.name
-        profile.statusInscription = data.data.state_inscription
-        geRecognitionsComplete(profile.scoutId)
-
-        getPercentAdvancePlan(profile.scoutId)
-        ServicesAdvancePlan.advancePlanDetails(profile.scoutId)
-          .then(response => {
-            recognitions.value = response[0].recognitions
-
-            console.log(recognitions.value)
-          })
-      } else {
-        $q.loading.hide()
-
-      }
-
-    })
-
-  const geRecognitionsComplete = () => {
-    showRecognitions.value = false
-    visible.value = true
-    ServicesAdvancePlan.getRecognitionsComplete(profile.scoutId)
-      .then(response => {
-        response.recog.forEach(item => {
-          recogGets[item.id] = true
-        })
-        console.log(response)
-        $q.loading.hide()
-        visible.value = false
-        showRecognitions.value = true
+      profile.grupoScout = response.data.name
+      profile.statusInscription = response.data.state_inscription
+      response.recog.forEach(item => {
+        recogGets[item.id] = true
       })
-  }
-  const getPercentAdvancePlan = () => {
-    ServicesAdvancePlan.getPercent(profile.scoutId)
-      .then(response => {
-        percent.value = response
-      })
-  }
-
+      showRecognitions.value = true
+      percent.value = response.percent
+      $q.loading.hide()
+      recognitions.value = response.advancePlan[0].recognitions
+    })
 } else {
   ServicesDirecting.getProfileDirecting()
     .then(response => {
@@ -356,11 +317,7 @@ if (store.role == 6) {
 
 }
 
-const reporte = async () => {
-  router.push({
-    name: 'ReportPeriods'
-  })
-}
+
 
 const reporteAdvancePlan = async () => {
   $q.loading.show()
@@ -368,22 +325,10 @@ const reporteAdvancePlan = async () => {
   $q.loading.hide()
 }
 
-const reportDirectings = async () => {
-  $q.loading.show()
-  await ServicesReport.reportDirectingsByGroups()
-  $q.loading.hide()
-}
-
 
 const reportScoutsByGroup = async () => {
   $q.loading.show()
   await ServicesReport.reportScoutsInscribedByUnit()
-  $q.loading.hide()
-}
-
-const reportDirectingsDetails = async () => {
-  $q.loading.show()
-  await ServicesReport.reportDirectingsDetails()
   $q.loading.hide()
 }
 

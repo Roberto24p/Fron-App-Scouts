@@ -16,7 +16,7 @@
                     <!-- <q-btn color="blue" icon="group" class="q-mx-sm" @click="redirect(props.row.id)"></q-btn> -->
                     <q-btn color="red" icon="delete" @click="onDelete(props.row)" v-show="props.row.state == 'A'">
                     </q-btn>
-                    <q-btn color="green"  @click="activate(props.row)" v-show="props.row.state != 'A'">
+                    <q-btn color="green" @click="activate(props.row)" v-show="props.row.state != 'A'">
                         Activar
                     </q-btn>
 
@@ -112,6 +112,14 @@
 
                         <q-item-section>{{ direct.person.name }} {{ direct.person.last_name }} </q-item-section>
                         <q-item-section>{{ direct.person.user.roles[0].nombre }}</q-item-section>
+                        <q-item-section>
+                            <q-select v-model="direct.unit.id" :options="unitsByGroup" emit-value map-options
+                                option-value="id" option-label="name"></q-select>
+                        </q-item-section>
+                        <q-item-section>
+                            <q-btn @click="updateDirectingUnit(direct.unit.id, direct.id)">Actualizar</q-btn>
+                        </q-item-section>
+
                     </q-item>
                 </q-list>
                 <q-list bordered v-else>
@@ -133,12 +141,15 @@
 <script setup>
 import ServicesGroup from 'src/services/ServicesGroup'
 import ServicesUnit from 'src/services/ServicesUnit';
-import { onBeforeMount, reactive, ref } from 'vue';
+import { onBeforeMount, reactive, ref, watch } from 'vue';
 import { useRouter } from "vue-router"
 import { useUsersStore } from '../store/user-store'
 import { useQuasar } from 'quasar'
 import ServicesRange from 'src/services/ServicesRange';
 import ServicesDirecting from 'src/services/ServicesDirecting';
+const unitsByGroup = ref([])
+const unitSelect = ref('')
+
 const $q = useQuasar()
 const store = useUsersStore()
 const router = useRouter()
@@ -329,6 +340,7 @@ const showDetailUnitDirecting = async (row) => {
     modalDetailDirecting.value = true
     const response = await ServicesDirecting.getDirectingsByUnit(row.id)
     directings.value = response.directings
+    unitsByGroup.value = response.units
     console.log(response)
 }
 
@@ -338,6 +350,20 @@ const getRanges = async () => {
     console.log(response)
 }
 
+const updateDirectingUnit = async (unitId, directId) => {
+    console.log(unitId)
+    console.log(directId)
+    const response = await ServicesDirecting.setUnitDirecting(unitId, directId)
+    if (response.success) {
+        modalDetailDirecting.value = false
+        $q.notify({
+            type: 'success',
+            message: response.message,
+            timeout: 2000
+        })
+    }
+    console.log(response)
+}
 
 onBeforeMount(() => {
     getRanges()

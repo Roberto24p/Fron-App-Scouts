@@ -8,7 +8,7 @@
                             <q-item-section avatar>
                                 <q-avatar square>
                                     <img
-                                        :src="profile.avatarScout == '' || profile.avatarScout == null ? 'https://png.pngtree.com/png-vector/20190116/ourlarge/pngtree-vector-avatar-icon-png-image_322275.jpg' : profile.avatarScout">
+                                        :src="profile.avatarScout == '' || profile.avatarScout == null ? env+'/img/avatar.0ebc89a2.jpg' : profile.avatarScout">
                                 </q-avatar>
                             </q-item-section>
 
@@ -300,6 +300,7 @@ getScoutData()
 getAdvancePlanDetails()
 getRecognitionsComplete()
 
+const env = process.env.APP_HOST
 
 
 

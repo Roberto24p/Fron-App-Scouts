@@ -4,6 +4,7 @@
     <q-table title="Grupos" :rows="groups" :columns="columns" row-key="name" :loading="loading">
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
+          <q-btn color="blue" icon="info" @click="showDirectingsByGroup(props.row)"></q-btn>
           <q-btn color="yellow" icon="mode_edit" class="q-mx-sm" @click="onEdit(props.row)"></q-btn>
           <q-btn color="red" icon="delete" @click="onDelete(props.row)" v-show="props.row.state=='A'"></q-btn>
           <q-btn color="green" @click="activate(props.row)" v-show="props.row.state!='A'">Activar</q-btn>
@@ -113,10 +114,53 @@
       </q-card-actions>
     </q-card>
   </q-dialog>
+  <q-dialog v-model="modalDetailDirecting">
+        <q-card style="width: 700px; max-width: 80vw;">
+            <q-card-section>
+                <div class="text-h6">Dirigentes del Grupo {{ Group.name }}</div>
+            </q-card-section>
+
+            <q-card-section class="q-pt-none">
+                <q-list bordered v-if="directings.length>0">
+                    <q-item clickable v-for="direct in directings" v-bind:key="direct.id">
+                        <q-item-section avatar>
+                            <q-avatar>
+                                <q-img
+                                    :src="direct.person.image == '' || direct.person.image == null ? 'https://png.pngtree.com/png-vector/20190116/ourlarge/pngtree-vector-avatar-icon-png-image_322275.jpg': direct.profile.image">
+                                </q-img>
+                            </q-avatar>
+                        </q-item-section>
+
+                        <q-item-section>{{ direct.person.name }} {{ direct.person.last_name }} </q-item-section>
+                        <q-item-section>{{ direct.person.user.roles[0].nombre }}</q-item-section>
+                        <q-item-section>
+                            <q-select v-model="direct.unit.id" :options="unitsDetailGroup" emit-value map-options
+                                option-value="id" option-label="name"></q-select>
+                        </q-item-section>
+                        <q-item-section>
+                            <q-btn @click="updateDirectingUnit(direct.unit.id, direct.id)">Actualizar</q-btn>
+                        </q-item-section>
+
+                    </q-item>
+                </q-list>
+                <q-list bordered v-else>
+                    <q-item-section>
+                        No hay dirigentes en este grupo
+                    </q-item-section>
+                </q-list>
+            </q-card-section>
+
+            <q-card-actions align="right" class="bg-white text-teal">
+                <q-btn flat label="OK" v-close-popup />
+            </q-card-actions>
+        </q-card>
+    </q-dialog>
+
 </template>
 <script setup>
 import { reactive, ref } from 'vue'
 import ServicesGroup from 'src/services/ServicesGroup'
+import ServicesDirecting from 'src/services/ServicesDirecting'
 import { useQuasar } from 'quasar'
 const $q = useQuasar()
 const loading = ref(false)
@@ -138,7 +182,7 @@ const columns = [
   { name: 'state', align: 'left', label: 'Estado', field: row => row.state == 'A'? 'Activo': 'Eliminado', sortable: true },
   { name: 'actions', label: 'Acciones' }
 ]
-
+const modalDetailDirecting = ref(false)
 const unitsSelect = [
   'Manada',
   'Tropa',
@@ -146,7 +190,8 @@ const unitsSelect = [
 ]
 const groups = ref([])
 const confirm = ref(false)
-
+const directings = ref([])
+const unitsDetailGroup = ref([])
 const Group = reactive({
   name: '',
   addres: '',
@@ -328,6 +373,30 @@ const upload = () => {
       ],
     })
   })
+}
+
+const showDirectingsByGroup = async (row) => {
+  console.log(row)
+  Group.name = row.name
+  modalDetailDirecting.value = true
+  const response = await ServicesDirecting.showDirectingsByGroup(row.id)
+  directings.value = response.directings
+  console.log(response)
+  unitsDetailGroup.value = response.units
+}
+
+const updateDirectingUnit = async (unitId, directId) => {
+    console.log(unitId)
+    console.log(directId)
+    const response = await ServicesDirecting.setUnitDirecting(unitId, directId)
+    if (response.success) {
+        $q.notify({
+            type: 'success',
+            message: response.message,
+            timeout: 2000
+        })
+    }
+    console.log(response)
 }
 
 const fileComplete = (info) => {
