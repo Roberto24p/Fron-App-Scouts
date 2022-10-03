@@ -105,7 +105,7 @@
                         <q-item-section avatar>
                             <q-avatar>
                                 <q-img
-                                    :src="direct.person.image == '' || direct.person.image == null ? 'https://png.pngtree.com/png-vector/20190116/ourlarge/pngtree-vector-avatar-icon-png-image_322275.jpg': direct.profile.image">
+                                    :src="direct.person.image == '' || direct.person.image == null ? env+'/img/avatar.0ebc89a2.jpg': direct.person.image">
                                 </q-img>
                             </q-avatar>
                         </q-item-section>
@@ -149,6 +149,7 @@ import ServicesRange from 'src/services/ServicesRange';
 import ServicesDirecting from 'src/services/ServicesDirecting';
 const unitsByGroup = ref([])
 const unitSelect = ref('')
+const env = ref(process.env.APP_HOST)
 
 const $q = useQuasar()
 const store = useUsersStore()

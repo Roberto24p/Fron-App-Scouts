@@ -8,7 +8,6 @@
             <q-card-section class="q-pt-none">
                 <q-img :src="image" no-native-menu>
                     <div class="absolute-top text-center">
-                        Paga
                     </div>
                 </q-img>
             </q-card-section>
@@ -281,7 +280,6 @@ const period = reactive({
     start: '',
     end: ''
 })
-
 const $q = useQuasar()
 
 const inscriptionExist = ref(false)

@@ -3,7 +3,7 @@
         <div class="row" style="width: 100%; position: float; height: 100%; margin: 10px; border-color: #DFF6FE; border-style: solid;">
             <div class="col-lg-7 col-md-7 col-md-7">
                 <q-img height="100%"
-                    src="https://c1.wallpaperflare.com/preview/688/239/658/boy-scout-scouting-asia.jpg">
+                    src="../assets/img-login.png">
                 </q-img>
             </div>
             <div class="col-lg-5 col-md-5 col-xs-12 q-pa-md">

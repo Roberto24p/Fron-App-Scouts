@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-7">
-            <q-img height="649px" src="https://c1.wallpaperflare.com/preview/688/239/658/boy-scout-scouting-asia.jpg">
+            <q-img height="649px" src="../assets/img-login.png">
             </q-img>
         </div>
         <div class="col-lg-5 col-md-5 col-xs-12 q-pa-md">
@@ -32,11 +32,10 @@
                         </template>
                     </q-input>
                     <div class="q-pa-sm ">
-                        <a class="float-left" style="text-decoration: none; color: green; cursor:pointer" @click="redirectLogin"
-                            >Inicia Sesión</a>
+                        <a class="float-left" style="text-decoration: none; color: green; cursor:pointer"
+                            @click="redirectLogin">Inicia Sesión</a>
                     </div>
-                    <q-btn label="Registrate" style="width: 100%;" type="submit" color="primary"
-                        @click="register" />
+                    <q-btn label="Registrate" style="width: 100%;" type="submit" color="primary" @click="register" />
                 </q-form>
             </div>
         </div>
@@ -120,6 +119,7 @@ const validateCode = () => { //PRODUCCION
     }
 }
 
+
 const pruebasRegister = () => { // DESARROLLO
     ServicesAuth.register(scout)
         .then(res => {
@@ -140,17 +140,55 @@ const pruebasRegister = () => { // DESARROLLO
         })
 }
 const register = () => {
+
     $q.loading.show()
+    if (validateCI(scout.dni)) {
 
-    ServicesAuth.validateEmail(scout.email)
-        .then(response => {
-            $q.loading.hide()
+        ServicesAuth.validateEmail(scout.email)
+            .then(response => {
+                $q.loading.hide()
 
-            if (true) {
-                persistent.value = true
-            }
-            console.log(response)
+                if (true) {
+                    persistent.value = true
+                }
+                console.log(response)
+            })
+    } else {
+        $q.dialog({
+            dark: true,
+            title: 'Cédula inválida ',
+            message: 'Ingrese una cédula válida'
         })
+        $q.loading.hide()
+
+    }
     // ServicesAuth.register(scout)
+}
+
+const validateCI = (cad) => {
+    var total = 0;
+    var longitud = cad.length;
+    var longcheck = longitud - 1;
+    
+    if (cad !== "" && longitud === 10) {
+        for (let i = 0; i < longcheck; i++) {
+            if (i % 2 === 0) {
+                var aux = cad.charAt(i) * 2;
+                if (aux > 9) aux -= 9;
+                total += aux;
+            } else {
+                total += parseInt(cad.charAt(i)); // parseInt o concatenará en lugar de sumar
+            }
+        }
+
+        total = total % 10 ? 10 - total % 10 : 0;
+
+        if (cad.charAt(longitud - 1) == total) {
+            return true
+        } else {
+            return false
+        }
+    }
+
 }
 </script>

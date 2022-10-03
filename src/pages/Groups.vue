@@ -126,7 +126,7 @@
                         <q-item-section avatar>
                             <q-avatar>
                                 <q-img
-                                    :src="direct.person.image == '' || direct.person.image == null ? 'https://png.pngtree.com/png-vector/20190116/ourlarge/pngtree-vector-avatar-icon-png-image_322275.jpg': direct.profile.image">
+                                    :src="direct.person.image == '' || direct.person.image == null ? env+'/img/avatar.0ebc89a2.jpg': direct.person.image">
                                 </q-img>
                             </q-avatar>
                         </q-item-section>
@@ -161,7 +161,8 @@
 import { reactive, ref } from 'vue'
 import ServicesGroup from 'src/services/ServicesGroup'
 import ServicesDirecting from 'src/services/ServicesDirecting'
-import { useQuasar } from 'quasar'
+import { useQuasar } from 'quasar'  
+const env = ref(process.env.APP_HOST)
 const $q = useQuasar()
 const loading = ref(false)
 const bttForm = ref(false)

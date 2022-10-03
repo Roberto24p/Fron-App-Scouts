@@ -55,14 +55,17 @@
                                     :rules="[val=>val&&val.length==10 || 'La cédula tiene 10 digitos']" />
                             </div>
                             <div class="col-10">
+                                <q-item>
+                                    <q-uploader @uploaded="fileComplete" :factory="upload" style="max-width: 300px"   label="Actualiza tu imagen de perfil"
+                                        field-name="image" />
+                                </q-item>
+                            </div>
+                            <div class="col-10">
                                 <q-btn label="Actualizar Datos" style="width: 100%;" type="submit" color="primary" />
 
                             </div>
                         </div>
-                        <q-item>
-                            <!-- <q-uploader @uploaded="fileComplete" :factory="upload" style="max-width: 300px"
-                                field-name="image" /> -->
-                        </q-item>
+
 
                     </q-form>
                 </q-card>
@@ -75,7 +78,7 @@
                 <div class="text-h6">Cambia tu contraseña</div>
             </q-card-section>
 
-           
+
             <q-card-section class="q-pt-none">
                 <q-input dense v-model="passwords.newPassword" type="password" label="Ingresa tu nueva contraseña" />
             </q-card-section>
